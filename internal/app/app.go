@@ -223,7 +223,7 @@ func (m *MediaApp) OnRefresh(ctx app.Context) {
 }
 
 // Preload an image to make sure it's in the browser cache
-func preloadImage(ctx app.Context, url string) {
+func preloadImage(url string) {
 	if url == "" {
 		return
 	}
@@ -302,7 +302,7 @@ func (m *MediaApp) fetchMedia(ctx app.Context, forceRefresh bool) {
 					// Preload visible images
 					for i := start; i < end && i < len(m.Filtered); i++ {
 						if m.Filtered[i].Logo != "" {
-							preloadImage(ctx, m.Filtered[i].Logo)
+							preloadImage(m.Filtered[i].Logo)
 						}
 					}
 				}()
