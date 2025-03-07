@@ -1,0 +1,12 @@
+{
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/node:1": {},
+    "ghcr.io/devcontainers-extra/features/ripgrep:1": {},
+    "ghcr.io/devcontainers/features/go": {
+      "version": "1.24.1"
+    }
+  },
+  "postCreateCommand": "echo 'export TERM=xterm-256color' >> ~/.bashrc && echo 'export TERM=xterm-256color' >> ~/.zshrc"
+}
