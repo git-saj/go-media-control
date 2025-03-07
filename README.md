@@ -44,7 +44,7 @@ go-media-control/
 ### Option 1: Using Docker
 1. **Pull the Docker image**:
     ```bash
-    docker pull ghcr.io/your-username/go-media-control:latest
+    docker pull ghcr.io/git-saj/go-media-control:latest
     ```
 
 2. **Run the container**:
@@ -53,13 +53,13 @@ go-media-control/
       -e APP_MEDIA_SOURCE=m3u \
       -e APP_M3U_URL=http://example.com/playlist.m3u \
       -e APP_DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/your-id/your-token \
-      ghcr.io/your-username/go-media-control:latest
+      ghcr.io/git-saj/go-media-control:latest
     ```
 
 ### Option 2: Building from Source
 1. **Clone the Repository**:
     ```bash
-    git clone https://github.com/your-username/go-media-control.git
+    git clone https://github.com/git-saj/go-media-control.git
     cd go-media-control
     ```
 
@@ -95,20 +95,22 @@ go-media-control/
 
 ### Example Configuration
 For `.m3u`:
-    // bash
-    export APP_M3U_URL="http://example.com/playlist.m3u"
-    export APP_DISCORD_WEBHOOK_URL="https://discord.com/api/webhooks/your-id/your-token"
-    export APP_MEDIA_SOURCE="m3u"
-    export APP_PORT="8080"
+  ```bash
+  export APP_M3U_URL="http://example.com/playlist.m3u"
+  export APP_DISCORD_WEBHOOK_URL="https://discord.com/api/webhooks/your-id/your-token"
+  export APP_MEDIA_SOURCE="m3u"
+  export APP_PORT="8080"
+  ```
 
 For Xtreams:
-    // bash
-    export APP_XTREAMS_BASE_URL="http://xtreams-api.com"
-    export APP_XTREAMS_USERNAME="your-username"
-    export APP_XTREAMS_PASSWORD="your-password"
-    export APP_DISCORD_WEBHOOK_URL="https://discord.com/api/webhooks/your-id/your-token"
-    export APP_MEDIA_SOURCE="xtreams"
-    export APP_PORT="8080"
+  ```bash
+  export APP_XTREAMS_BASE_URL="http://xtreams-api.com"
+  export APP_XTREAMS_USERNAME="your-username"
+  export APP_XTREAMS_PASSWORD="your-password"
+  export APP_DISCORD_WEBHOOK_URL="https://discord.com/api/webhooks/your-id/your-token"
+  export APP_MEDIA_SOURCE="xtreams"
+  export APP_PORT="8080"
+  ```
 
 Alternatively, use a `.env` file and source it:
     // bash
@@ -148,7 +150,6 @@ docker run -p 8080:8080 \
 3. Use the search bar to filter media by name.
 4. Click a card to send its details to the Discord webhook.
 5. Click "Refresh" to reload the media list.
-6. Add `?refresh=true` to the API URL to force a cache refresh.
 
 ### Running Tests
 ```bash
