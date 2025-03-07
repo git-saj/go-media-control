@@ -27,7 +27,7 @@ type Media struct {
 
 var (
 	client = &http.Client{Timeout: 10 * time.Second}
-	
+
 	// Cache for media data
 	mediaCache     []Media
 	mediaCacheMu   sync.RWMutex
@@ -52,7 +52,7 @@ func FetchMedia(forceRefresh bool) ([]Media, error) {
 	mediaCacheMu.RLock()
 	cacheValid := !forceRefresh && len(mediaCache) > 0 && time.Since(cacheTimestamp) < cacheTTL
 	mediaCacheMu.RUnlock()
-	
+
 	if cacheValid {
 		slog.Info("Using cached media data", "count", len(mediaCache), "age", time.Since(cacheTimestamp).String())
 		mediaCacheMu.RLock()
@@ -60,18 +60,18 @@ func FetchMedia(forceRefresh bool) ([]Media, error) {
 		mediaCacheMu.RUnlock()
 		return cachedMedia, nil
 	}
-	
+
 	if forceRefresh {
 		slog.Info("Force refreshing media data")
 	}
-	
+
 	// No valid cache, fetch new data
 	source := strings.ToLower(viper.GetString("MEDIA_SOURCE"))
 	slog.Info("Fetching fresh media data", "source", source)
-	
+
 	var medias []Media
 	var err error
-	
+
 	switch source {
 	case "m3u":
 		medias, err = fetchM3U(viper.GetString("M3U_URL"))
@@ -84,17 +84,17 @@ func FetchMedia(forceRefresh bool) ([]Media, error) {
 	default:
 		return nil, fmt.Errorf("unsupported media source: %s", source)
 	}
-	
+
 	if err != nil {
 		return nil, err
 	}
-	
+
 	// Update the cache with the new data
 	mediaCacheMu.Lock()
 	mediaCache = medias
 	cacheTimestamp = time.Now()
 	mediaCacheMu.Unlock()
-	
+
 	slog.Info("Updated media cache", "count", len(medias))
 	return medias, nil
 }
@@ -126,13 +126,13 @@ func fetchM3U(url string) ([]Media, error) {
 		}
 		if strings.HasPrefix(line, "#EXTINF") {
 			current = Media{} // Reset for each new entry
-			
+
 			// Extract attributes like tvg-logo before splitting by comma
 			attrs := extractAttributes(line)
 			if logo, ok := attrs["tvg-logo"]; ok {
 				current.Logo = logo
 			}
-			
+
 			// Extract channel name - everything after the last comma
 			parts := strings.SplitN(line, ",", 2)
 			if len(parts) == 2 {
@@ -155,46 +155,46 @@ func fetchM3U(url string) ([]Media, error) {
 // Helper to extract attributes from #EXTINF line
 func extractAttributes(line string) map[string]string {
 	attrs := make(map[string]string)
-	
+
 	// Find attributes before the comma
 	if idx := strings.Index(line, ","); idx > 0 {
 		line = line[:idx]
 	}
-	
+
 	// Split by space to get individual attributes
 	parts := strings.Fields(line)
-	
+
 	for _, part := range parts {
 		if strings.Contains(part, "=") {
 			kv := strings.SplitN(part, "=", 2)
 			if len(kv) == 2 {
 				key := strings.TrimSpace(kv[0])
 				value := kv[1]
-				
+
 				// Remove surrounding quotes if present
 				value = strings.Trim(value, "\"")
-				
+
 				attrs[key] = value
 			}
 		}
 	}
-	
+
 	return attrs
 }
 
 type Stream struct {
-	Num         int    `json:"num"`
-	Name        string `json:"name"`
-	StreamType  string `json:"stream_type"`
-	StreamID    int    `json:"stream_id"`
-	StreamIcon  string `json:"stream_icon"`
+	Num          int    `json:"num"`
+	Name         string `json:"name"`
+	StreamType   string `json:"stream_type"`
+	StreamID     int    `json:"stream_id"`
+	StreamIcon   string `json:"stream_icon"`
 	EPGChannelID string `json:"epg_channel_id"`
-	Added       string `json:"added"`
-	CustomSID   string `json:"custom_sid"`
-	TVArchive   int    `json:"tv_archive"`
+	Added        string `json:"added"`
+	CustomSID    string `json:"custom_sid"`
+	TVArchive    int    `json:"tv_archive"`
 	DirectSource string `json:"direct_source"`
-	CategoryID  string `json:"category_id"`
-	Thumbnail   string `json:"thumbnail"`
+	CategoryID   string `json:"category_id"`
+	Thumbnail    string `json:"thumbnail"`
 }
 
 type XtreamsResponse struct {
@@ -236,12 +236,12 @@ func fetchXtreamsAPI(baseURL, username, password string) ([]Media, error) {
 	var mediaList []Media
 	for _, stream := range streams {
 		// Construct the stream URL based on ID, username, and password
-		streamURL := fmt.Sprintf("%s/%s/%s/%d.ts", 
-			baseURL, 
-			username, 
-			password, 
+		streamURL := fmt.Sprintf("%s/%s/%s/%d.ts",
+			baseURL,
+			username,
+			password,
 			stream.StreamID)
-			
+
 		// Create Media object with the right fields
 		mediaList = append(mediaList, Media{
 			Name: stream.Name,

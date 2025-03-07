@@ -23,7 +23,7 @@ func SendWebhook(media media.Media) error {
 	if webhookURL == "" {
 		return fmt.Errorf("discord webhook URL is not configured")
 	}
-	
+
 	payload := map[string]string{
 		"content": fmt.Sprintf("Selected media: %s\nURL: %s", media.Name, media.URL),
 	}
