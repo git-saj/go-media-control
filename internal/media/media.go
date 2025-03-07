@@ -126,14 +126,17 @@ func fetchM3U(url string) ([]Media, error) {
 		}
 		if strings.HasPrefix(line, "#EXTINF") {
 			current = Media{} // Reset for each new entry
-			parts := strings.SplitN(line, ",", 2)
-			if len(parts) == 2 {
-				current.Name = strings.TrimSpace(parts[1])
-			}
-			// Extract attributes like tvg-logo
+			
+			// Extract attributes like tvg-logo before splitting by comma
 			attrs := extractAttributes(line)
 			if logo, ok := attrs["tvg-logo"]; ok {
 				current.Logo = logo
+			}
+			
+			// Extract channel name - everything after the last comma
+			parts := strings.SplitN(line, ",", 2)
+			if len(parts) == 2 {
+				current.Name = strings.TrimSpace(parts[1])
 			}
 		} else if strings.HasPrefix(line, "http") {
 			current.URL = line
@@ -152,17 +155,30 @@ func fetchM3U(url string) ([]Media, error) {
 // Helper to extract attributes from #EXTINF line
 func extractAttributes(line string) map[string]string {
 	attrs := make(map[string]string)
+	
+	// Find attributes before the comma
+	if idx := strings.Index(line, ","); idx > 0 {
+		line = line[:idx]
+	}
+	
+	// Split by space to get individual attributes
 	parts := strings.Fields(line)
+	
 	for _, part := range parts {
 		if strings.Contains(part, "=") {
 			kv := strings.SplitN(part, "=", 2)
 			if len(kv) == 2 {
-				key := strings.Trim(kv[0], "\"")
-				value := strings.Trim(kv[1], "\"")
+				key := strings.TrimSpace(kv[0])
+				value := kv[1]
+				
+				// Remove surrounding quotes if present
+				value = strings.Trim(value, "\"")
+				
 				attrs[key] = value
 			}
 		}
 	}
+	
 	return attrs
 }
 
