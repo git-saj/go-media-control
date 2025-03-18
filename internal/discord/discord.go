@@ -25,7 +25,7 @@ func SendWebhook(media media.Media) error {
 	}
 
 	payload := map[string]string{
-		"content": fmt.Sprintf("Selected media: %s\nURL: %s", media.Name, media.URL),
+		"content": fmt.Sprintf("$play-live %s", media.URL),
 	}
 	body, err := json.Marshal(payload)
 	if err != nil {
