@@ -25,7 +25,7 @@ func SendWebhook(media media.Media) error {
 	}
 
 	payload := map[string]string{
-		"content": fmt.Sprintf("!play --livestream %s", media.URL), // TODO: should be dynamic?
+		"content": fmt.Sprintf("!play --livestream --room 1333807788521951254 %s", media.URL), // TODO: should be dynamic?
 	}
 	body, err := json.Marshal(payload)
 	if err != nil {
