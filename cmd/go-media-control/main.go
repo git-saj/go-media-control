@@ -36,6 +36,7 @@ func main() {
 		w.Write([]byte("Hello, World!"))
 	})
 	r.Get("/api/media", h.MediaHandler)
+	r.Post("/api/send", h.SendHandler)
 
 	// Start server
 	logger.Info("Starting server", "port", cfg.Port)
