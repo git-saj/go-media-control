@@ -1,16 +1,20 @@
 {
-  pkgs ? (import <nixpkgs> {
-    config.allowUnfree = true;
-  }),
-  ...
+  pkgs ?
+    import <nixpkgs> {
+      config.allowUnfree = true;
+    },
+  unstablePkgs ?
+    import (fetchTarball "https://github.com/NixOS/nixpkgs/archive/nixos-unstable.tar.gz") {
+      config.allowUnfree = true;
+    },
 }:
 pkgs.mkShell {
   nativeBuildInputs = with pkgs; [
     dotenv-cli
     air
     go
-    templ
-    tailwindcss
+    unstablePkgs.templ
+    unstablePkgs.tailwindcss_4
     nodejs
     git
     gnumake
@@ -19,6 +23,7 @@ pkgs.mkShell {
     nil
     alejandra
     jq
+    watchman
   ];
   shellHook = ''
     echo "🚀 Development environment loaded."

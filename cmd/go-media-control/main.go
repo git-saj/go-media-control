@@ -31,12 +31,14 @@ func main() {
 	r.Use(middleware.Logger)    // Log requests
 	r.Use(middleware.Recoverer) // Recover from panics
 
+	// Serve static files
+	r.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+
 	// Define routes
-	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Hello, World!"))
-	})
+	r.Get("/", h.HomeHandler)
 	r.Get("/api/media", h.MediaHandler)
 	r.Post("/api/send", h.SendHandler)
+	r.Post("/search", h.SearchHandler)
 
 	// Start server
 	logger.Info("Starting server", "port", cfg.Port)
