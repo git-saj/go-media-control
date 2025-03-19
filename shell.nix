@@ -14,7 +14,6 @@ pkgs.mkShell {
     air
     go
     unstablePkgs.templ
-    unstablePkgs.tailwindcss_4
     nodejs
     git
     gnumake
@@ -30,6 +29,6 @@ pkgs.mkShell {
     echo "Go version: $(go version)"
     echo "Templ version: $(templ version)"
     echo "Air version: $(air -v)"
-    echo "Tailwind CSS version: $(tailwindcss  --help  | grep "tailwindcss v")"
+    echo "Tailwind CSS version: $(npx tailwindcss  --help  | grep "tailwindcss v")"
   '';
 }

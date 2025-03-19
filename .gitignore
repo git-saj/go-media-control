@@ -26,3 +26,4 @@ go.work.sum
 .direnv/
 tmp/
 node_modules/
+static/css/styles.css
