@@ -113,6 +113,35 @@ func (h *Handlers) SearchHandler(w http.ResponseWriter, r *http.Request) {
 	templates.Results(paginated, page, limit, total).Render(r.Context(), w)
 }
 
+// RefreshCacheHandler clears the cache and returns refreshed results
+func (h *Handlers) RefreshHandler(w http.ResponseWriter, r *http.Request) {
+	// Clear the client's cache
+	h.xtreamClient.Cache.Clear()
+
+	// Fetch fresh data (will re-cache automatically)
+	media, err := h.xtreamClient.GetLiveStreams()
+	if err != nil {
+		h.logger.Error("Failed to fetch media for refresh", "error", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	// Get page and limit from query params (default: page=1, limit=15)
+	pageStr := r.URL.Query().Get("page")
+	limitStr := r.URL.Query().Get("limit")
+	page, _ := strconv.Atoi(pageStr)
+	if page < 1 {
+		page = 1
+	}
+	limit, _ := strconv.Atoi(limitStr)
+	if limit < 1 {
+		limit = 15
+	}
+
+	paginated, total := paginate(media, page, limit)
+	templates.Results(paginated, page, limit, total).Render(r.Context(), w)
+}
+
 // MediaHandler handles GET /api/media requests
 func (h *Handlers) MediaHandler(w http.ResponseWriter, r *http.Request) {
 	media, err := h.xtreamClient.GetLiveStreams()

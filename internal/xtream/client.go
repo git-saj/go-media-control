@@ -15,8 +15,8 @@ type Client struct {
 	BaseURL    string
 	Username   string
 	Password   string
+	Cache      *cache.Cache[[]MediaItem]
 	httpClient *http.Client
-	cache      *cache.Cache[[]MediaItem]
 }
 
 // MediaItem represents a single media item from the Xtream Code API
@@ -33,8 +33,8 @@ func NewClient(cfg *config.Config) *Client {
 		BaseURL:    cfg.XtreamBaseURL,
 		Username:   cfg.XtreamUsername,
 		Password:   cfg.XtreamPassword,
+		Cache:      cache.New[[]MediaItem](),
 		httpClient: &http.Client{},
-		cache:      cache.New[[]MediaItem](),
 	}
 }
 
@@ -80,7 +80,7 @@ func (c *Client) FetchLiveStreams() ([]MediaItem, error) {
 // GetLiveStreams fetches live streams, using the cache if available
 func (c *Client) GetLiveStreams() ([]MediaItem, error) {
 	// Check cache first
-	if cached, ok := c.cache.Get(); ok {
+	if cached, ok := c.Cache.Get(); ok {
 		return cached, nil
 	}
 
@@ -90,8 +90,8 @@ func (c *Client) GetLiveStreams() ([]MediaItem, error) {
 		return nil, err
 	}
 
-	// Store in cache with a 25-hour TTL
-	c.cache.Set(media, time.Hour*25)
+	// Store in cache with a 24-hour TTL
+	c.Cache.Set(media, time.Hour*24)
 
 	return media, nil
 }

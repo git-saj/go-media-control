@@ -39,6 +39,7 @@ func main() {
 	r.Get("/api/media", h.MediaHandler)
 	r.Post("/api/send", h.SendHandler)
 	r.Post("/search", h.SearchHandler)
+	r.Get("/refresh", h.RefreshHandler)
 
 	// Start server
 	logger.Info("Starting server", "port", cfg.Port)
