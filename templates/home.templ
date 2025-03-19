@@ -1,18 +1,16 @@
 package templates
 
-import (
-	"fmt"
-	"github.com/git-saj/go-media-control/internal/xtream"
-)
+import "github.com/git-saj/go-media-control/internal/xtream"
+import "fmt"
 
 templ Home(channels []xtream.MediaItem, page, limit, total int) {
 	@Base(homeContent(channels, page, limit, total))
 }
 
 templ homeContent(channels []xtream.MediaItem, page, limit, total int) {
-	<div class="w-full max-w-7xl p-6 pt-8">
-		<!-- Search Bar (static, outside HTMX target) -->
-		<div class="mb-6">
+	<div class="w-full max-w-7xl p-6 min-h-screen flex flex-col">
+		<!-- Search Bar (static, top) -->
+		<div class="mb-6 flex-shrink-0">
 			<input
 				type="text"
 				placeholder="Search channels..."
@@ -24,34 +22,48 @@ templ homeContent(channels []xtream.MediaItem, page, limit, total int) {
 				hx-vals={ fmt.Sprintf(`{"limit": "%d"}`, limit) }
 			/>
 		</div>
-		<!-- Results (cards + pagination, swapped by HTMX) -->
-		@Results(channels, page, limit, total)
+		<!-- Results (cards + pagination) -->
+		<div id="results" class="flex-grow flex flex-col">
+			<div id="channel-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 max-h-[calc(100vh-12rem)] overflow-auto">
+				@ChannelCards(channels)
+			</div>
+			<!-- Pagination Controls (bottom) -->
+			<div class="mt-6 flex justify-between flex-shrink-0 bg-base-100 py-2">
+				<a
+					href={ templ.SafeURL(fmt.Sprintf("/?page=%d&limit=%d", page-1, limit)) }
+					class="btn btn-primary { page <= 1 ? 'btn-disabled' : '' }"
+				>Previous</a>
+				<span>Page { fmt.Sprintf("%d", page) } of { fmt.Sprintf("%d", (total + limit - 1) / limit) }</span>
+				<a
+					href={ templ.SafeURL(fmt.Sprintf("/?page=%d&limit=%d", page+1, limit)) }
+					class="btn btn-primary { page * limit >= total ? 'btn-disabled' : '' }"
+				>Next</a>
+			</div>
+		</div>
 	</div>
 }
 
 templ Results(channels []xtream.MediaItem, page, limit, total int) {
-	<div id="results">
-		<div id="channel-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-			@ChannelCards(channels)
-		</div>
-		<div class="mt-6 flex justify-between">
-			<a
-				href={ templ.SafeURL(fmt.Sprintf("/?page=%d&limit=%d", page-1, limit)) }
-				class="btn btn-primary { page <= 1 ? 'btn-disabled' : '' }"
-			>Previous</a>
-			<span>Page { fmt.Sprintf("%d", page) } of { fmt.Sprintf("%d", (total + limit - 1) / limit) }</span>
-			<a
-				href={ templ.SafeURL(fmt.Sprintf("/?page=%d&limit=%d", page+1, limit)) }
-				class="btn btn-primary { page * limit >= total ? 'btn-disabled' : '' }"
-			>Next</a>
-		</div>
+	<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 max-h-[calc(100vh-12rem)] overflow-auto">
+		@ChannelCards(channels)
+	</div>
+	<div class="mt-6 flex justify-between flex-shrink-0 bg-base-100 py-2">
+		<a
+			href={ templ.SafeURL(fmt.Sprintf("/?page=%d&limit=%d", page-1, limit)) }
+			class="btn btn-primary { page <= 1 ? 'btn-disabled' : '' }"
+		>Previous</a>
+		<span>Page { fmt.Sprintf("%d", page) } of { fmt.Sprintf("%d", (total + limit - 1) / limit) }</span>
+		<a
+			href={ templ.SafeURL(fmt.Sprintf("/?page=%d&limit=%d", page+1, limit)) }
+			class="btn btn-primary { page * limit >= total ? 'btn-disabled' : '' }"
+		>Next</a>
 	</div>
 }
 
 templ ChannelCards(channels []xtream.MediaItem) {
 	for _, ch := range channels {
 		<button
-			class="card bg-base-200 shadow-xl flex flex-col min-w-0 w-full h-64 hover:bg-base-300 transition-colors"
+			class="card bg-base-200 shadow-xl flex flex-col min-w-0 w-full h-64 hover:bg-base-300 transition-colors cursor-pointer"
 			hx-post="/api/send"
 			hx-vals={ fmt.Sprintf(`{"channel_id": %d}`, ch.StreamID) }
 			hx-target="body"

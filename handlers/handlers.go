@@ -56,7 +56,7 @@ func (h *Handlers) HomeHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Get page and limit from query params (default: page=1, limit=25)
+	// Get page and limit from query params (default: page=1, limit=15)
 	pageStr := r.URL.Query().Get("page")
 	limitStr := r.URL.Query().Get("limit")
 	page, _ := strconv.Atoi(pageStr)
@@ -65,7 +65,7 @@ func (h *Handlers) HomeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	limit, _ := strconv.Atoi(limitStr)
 	if limit < 1 {
-		limit = 25
+		limit = 15
 	}
 
 	paginated, total := paginate(media, page, limit)
@@ -94,13 +94,13 @@ func (h *Handlers) SearchHandler(w http.ResponseWriter, r *http.Request) {
 		filtered = media // Use full list if no query
 	}
 
-	// Get page and limit from form values (default: page=1, limit=25)
+	// Get page and limit from form values (default: page=1, limit=15)
 	pageStr := r.FormValue("page")
 	limitStr := r.FormValue("limit")
 	page, _ := strconv.Atoi(pageStr)
 	limit, _ := strconv.Atoi(limitStr)
 	if limit < 1 {
-		limit = 25
+		limit = 15
 	}
 	// Reset page to 1 when searching, unless explicitly set
 	if query != "" && pageStr == "" {
@@ -110,7 +110,7 @@ func (h *Handlers) SearchHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	paginated, total := paginate(filtered, page, limit)
-	templates.Results(paginated, page, limit, total).Render(r.Context(), w) // Render only results
+	templates.Results(paginated, page, limit, total).Render(r.Context(), w)
 }
 
 // MediaHandler handles GET /api/media requests
