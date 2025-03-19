@@ -1,0 +1,14 @@
+root = "."
+tmp_dir = "tmp"
+
+[build]
+cmd = "go build -o ./tmp/main ./cmd/go-media-control"
+bin = "./tmp/main"
+include_ext = ["go"]
+exclude_dir = ["static", "tmp", "vendor"]
+
+[log]
+main_only = true
+
+[misc]
+clean_on_exit = true
