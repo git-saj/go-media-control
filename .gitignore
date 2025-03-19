@@ -27,3 +27,6 @@ go.work.sum
 tmp/
 node_modules/
 static/css/styles.css
+
+# templ txt files.
+*_templ.txt
