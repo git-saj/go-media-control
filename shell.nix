@@ -18,6 +18,7 @@ pkgs.mkShell {
     tree
     nil
     alejandra
+    jq
   ];
   shellHook = ''
     echo "🚀 Development environment loaded."

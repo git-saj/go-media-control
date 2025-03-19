@@ -21,7 +21,7 @@ type MediaItem struct {
 	Name      string `json:"name"`
 	StreamID  int    `json:"stream_id"` // From API response
 	Logo      string `json:"stream_icon"`
-	StreamURL string `json:"-"` // Computed field, excluded from JSON
+	StreamURL string `json:"stream_url"`
 }
 
 // NewClient creates a new Xtream Code API client from the configuration
