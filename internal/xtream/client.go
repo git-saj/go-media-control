@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 
+	"github.com/git-saj/go-media-control/internal/cache"
 	"github.com/git-saj/go-media-control/internal/config"
 )
 
@@ -14,6 +16,7 @@ type Client struct {
 	Username   string
 	Password   string
 	httpClient *http.Client
+	cache      *cache.Cache[[]MediaItem]
 }
 
 // MediaItem represents a single media item from the Xtream Code API
@@ -31,11 +34,12 @@ func NewClient(cfg *config.Config) *Client {
 		Username:   cfg.XtreamUsername,
 		Password:   cfg.XtreamPassword,
 		httpClient: &http.Client{},
+		cache:      cache.New[[]MediaItem](),
 	}
 }
 
-// GetLiveStreams fetches live streams from the Xtream Code API and constructs StreamURL
-func (c *Client) GetLiveStreams() ([]MediaItem, error) {
+// FetchLiveStreams fetches live streams from the Xtream Code API and constructs StreamURL
+func (c *Client) FetchLiveStreams() ([]MediaItem, error) {
 	url := fmt.Sprintf("%s/player_api.php?username=%s&password=%s&action=get_live_streams",
 		c.BaseURL, c.Username, c.Password)
 
@@ -69,6 +73,25 @@ func (c *Client) GetLiveStreams() ([]MediaItem, error) {
 				c.BaseURL, c.Username, c.Password, item.StreamID),
 		}
 	}
+
+	return media, nil
+}
+
+// GetLiveStreams fetches live streams, using the cache if available
+func (c *Client) GetLiveStreams() ([]MediaItem, error) {
+	// Check cache first
+	if cached, ok := c.cache.Get(); ok {
+		return cached, nil
+	}
+
+	// Fetch from API if cache is empty or expired
+	media, err := c.FetchLiveStreams()
+	if err != nil {
+		return nil, err
+	}
+
+	// Store in cache with a 25-hour TTL
+	c.cache.Set(media, time.Hour*25)
 
 	return media, nil
 }
