@@ -1,48 +1,26 @@
-# Build stage
-FROM golang:1.24.1-alpine AS builder
-
+# Stage 1: Build Tailwind CSS
+FROM node:20 AS css-builder
 WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm install
+COPY static/css/input.css ./static/css/
+RUN npx @tailwindcss/cli -i static/css/input.css -o static/css/styles.css --minify
 
-# Copy go mod and sum files
+# Stage 2: Build Go binary with Templ
+FROM golang:1.23 AS go-builder
+WORKDIR /app
 COPY go.mod go.sum ./
-
-# Download dependencies
 RUN go mod download
-
-# Copy source code with proper structure for embedding
 COPY . .
-RUN mkdir -p cmd/go-media-control/static
-RUN cp -r static/* cmd/go-media-control/static/
+COPY --from=css-builder /app/static/css/styles.css ./static/css/styles.css
+RUN go install github.com/a-h/templ/cmd/templ@latest
+RUN templ generate
+RUN CGO_ENABLED=0 GOOS=linux go build -o /go-media-control ./cmd/go-media-control
 
-# Build the WASM application and server
-RUN mkdir -p out/web out/static && \
-    GOARCH=wasm GOOS=js go build -o out/web/app.wasm ./cmd/go-media-control && \
-    go build -o go-media-control ./cmd/go-media-control && \
-    cp -r static/* out/static/
-
-# Final stage
+# Stage 3: Final runtime image
 FROM alpine:3.19
-
 WORKDIR /app
-
-# Add CA certificates for HTTPS requests
-RUN apk --no-cache add ca-certificates tzdata
-
-# Copy the binary, WASM, and static files from builder
-COPY --from=builder /app/go-media-control .
-COPY --from=builder /app/out/web ./out/web
-COPY --from=builder /app/out/static ./out/static
-
-# Create a non-root user to run the application
-RUN adduser -D -H -h /app appuser && \
-    chown -R appuser:appuser /app
-USER appuser
-
-# Set environment variables (override these at runtime)
-ENV APP_PORT=8080
-
-# Expose the application port
+COPY --from=go-builder /go-media-control .
+COPY static ./static
 EXPOSE 8080
-
-# Run the application
-ENTRYPOINT ["/app/go-media-control"]
+CMD ["./go-media-control"]

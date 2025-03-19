@@ -1,0 +1,15 @@
+root = "."
+tmp_dir = "tmp"
+
+[build]
+cmd = "go build -o ./tmp/main ./cmd/go-media-control"
+bin = "./tmp/main"
+include_ext = ["go", "templ"]                         # Add .templ files for live reloading
+exclude_dir = ["static", "tmp", "vendor"]
+exclude_file = ["*_templ.go"]                         # Exclude generated Templ files
+
+[log]
+main_only = true
+
+[misc]
+clean_on_exit = true

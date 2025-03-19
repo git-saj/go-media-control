@@ -23,5 +23,7 @@ go.work.sum
 
 # env file
 .env
-
-out/
+.direnv/
+tmp/
+node_modules/
+static/css/styles.css
