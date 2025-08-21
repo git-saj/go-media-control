@@ -19,6 +19,7 @@ pkgs.mkShell {
     alejandra
     jq
     watchman
+    govulncheck
   ];
   shellHook = ''
     echo "🚀 Development environment loaded."
