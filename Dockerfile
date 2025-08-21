@@ -13,7 +13,7 @@ COPY go.mod go.sum ./
 RUN go mod download
 COPY . .
 COPY --from=css-builder /app/static/css/styles.css ./static/css/styles.css
-RUN go install github.com/a-h/templ/cmd/templ@latest
+RUN go install github.com/a-h/templ/cmd/templ@v0.3.865
 RUN templ generate
 RUN CGO_ENABLED=0 GOOS=linux go build -o /go-media-control ./cmd/go-media-control
 

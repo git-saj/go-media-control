@@ -3,17 +3,13 @@
     import <nixpkgs> {
       config.allowUnfree = true;
     },
-  unstablePkgs ?
-    import (fetchTarball "https://github.com/NixOS/nixpkgs/archive/nixos-unstable.tar.gz") {
-      config.allowUnfree = true;
-    },
 }:
 pkgs.mkShell {
   nativeBuildInputs = with pkgs; [
     dotenv-cli
     air
     go
-    unstablePkgs.templ
+    templ
     nodejs
     git
     gnumake

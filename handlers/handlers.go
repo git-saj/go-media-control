@@ -23,12 +23,14 @@ type Handlers struct {
 
 // NewHandlers creates a new Handlers instance
 func NewHandlers(logger *slog.Logger, cfg *config.Config) *Handlers {
-	return &Handlers{
+	h := &Handlers{
 		logger:        logger,
 		xtreamClient:  xtream.NewClient(cfg),
 		discordClient: discord.NewWebhookClient(cfg.DiscordWebhook),
 		commandPrefix: cfg.CommandPrefix,
 	}
+	h.logger.Info("Handlers initialized", "xtream_baseurl", cfg.XtreamBaseURL)
+	return h
 }
 
 // paginate slices a channel list based on page and limit
