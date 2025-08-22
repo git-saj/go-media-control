@@ -19,6 +19,7 @@ type Handlers struct {
 	xtreamClient  *xtream.Client
 	discordClient *discord.WebhookClient
 	commandPrefix string
+	basePath      string
 }
 
 // NewHandlers creates a new Handlers instance
@@ -28,8 +29,9 @@ func NewHandlers(logger *slog.Logger, cfg *config.Config) *Handlers {
 		xtreamClient:  xtream.NewClient(cfg),
 		discordClient: discord.NewWebhookClient(cfg.DiscordWebhook),
 		commandPrefix: cfg.CommandPrefix,
+		basePath:      cfg.BasePath,
 	}
-	h.logger.Info("Handlers initialized", "xtream_baseurl", cfg.XtreamBaseURL)
+	h.logger.Info("Handlers initialized", "xtream_baseurl", cfg.XtreamBaseURL, "base_path", cfg.BasePath)
 	return h
 }
 
@@ -71,7 +73,7 @@ func (h *Handlers) HomeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	paginated, total := paginate(media, page, limit)
-	templates.Home(paginated, page, limit, total).Render(r.Context(), w)
+	templates.Home(paginated, page, limit, total, h.basePath).Render(r.Context(), w)
 }
 
 // SearchHandler filters channels based on search query with pagination
@@ -112,7 +114,7 @@ func (h *Handlers) SearchHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	paginated, total := paginate(filtered, page, limit)
-	templates.Results(paginated, page, limit, total).Render(r.Context(), w)
+	templates.Results(paginated, page, limit, total, h.basePath).Render(r.Context(), w)
 }
 
 // RefreshCacheHandler clears the cache and returns refreshed results
@@ -141,7 +143,7 @@ func (h *Handlers) RefreshHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	paginated, total := paginate(media, page, limit)
-	templates.Results(paginated, page, limit, total).Render(r.Context(), w)
+	templates.Results(paginated, page, limit, total, h.basePath).Render(r.Context(), w)
 }
 
 // MediaHandler handles GET /api/media requests

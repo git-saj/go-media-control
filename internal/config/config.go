@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"os"
+	"strings"
 )
 
 // Config holds the configuration for the application
@@ -13,6 +14,7 @@ type Config struct {
 	DiscordWebhook string
 	CommandPrefix  string
 	Port           string
+	BasePath       string
 	// Authentik OIDC configuration
 	AuthentikURL  string
 	ClientID      string
@@ -31,6 +33,7 @@ func LoadConfig() (*Config, error) {
 		DiscordWebhook: os.Getenv("DISCORD_WEBHOOK"),
 		CommandPrefix:  os.Getenv("COMMAND_PREFIX"),
 		Port:           os.Getenv("PORT"),
+		BasePath:       os.Getenv("BASE_PATH"),
 		// Authentik OIDC configuration
 		AuthentikURL:  os.Getenv("AUTHENTIK_URL"),
 		ClientID:      os.Getenv("AUTHENTIK_CLIENT_ID"),
@@ -81,6 +84,19 @@ func LoadConfig() (*Config, error) {
 	// Set the default port if not provided
 	if cfg.Port == "" {
 		cfg.Port = "8080"
+	}
+
+	// Set default base path if not provided
+	if cfg.BasePath == "" {
+		cfg.BasePath = "/"
+	} else {
+		// Ensure base path starts with / and ends with /
+		if !strings.HasPrefix(cfg.BasePath, "/") {
+			cfg.BasePath = "/" + cfg.BasePath
+		}
+		if !strings.HasSuffix(cfg.BasePath, "/") {
+			cfg.BasePath = cfg.BasePath + "/"
+		}
 	}
 
 	return cfg, nil

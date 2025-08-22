@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -27,7 +28,8 @@ func (h *AuthHandlers) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	// Check if user is already authenticated
 	if _, err := h.authService.ValidateSession(r); err == nil {
 		h.logger.Debug("User already authenticated, redirecting to home")
-		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		homeURL := strings.TrimSuffix(h.authService.basePath, "/") + "/"
+		http.Redirect(w, r, homeURL, http.StatusTemporaryRedirect)
 		return
 	}
 
@@ -141,7 +143,8 @@ func (h *AuthHandlers) CallbackHandler(w http.ResponseWriter, r *http.Request) {
 		"name", userInfo.Name)
 
 	// Redirect to home page
-	http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+	homeURL := strings.TrimSuffix(h.authService.basePath, "/") + "/"
+	http.Redirect(w, r, homeURL, http.StatusTemporaryRedirect)
 }
 
 // LogoutHandler clears the user session and optionally redirects to Authentik logout
@@ -155,7 +158,8 @@ func (h *AuthHandlers) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	h.logger.Info("User logged out")
 
 	// Check if we should redirect to Authentik logout
-	logoutURL := fmt.Sprintf("%s/application/o/go-media-control/end-session/", h.authService.config.AuthentikURL)
+	baseURL := strings.TrimSuffix(h.authService.config.AuthentikURL, "/")
+	logoutURL := fmt.Sprintf("%s/application/o/go-media-control/end-session/", baseURL)
 
 	// You can optionally redirect to Authentik's logout endpoint
 	// Check if we should redirect to Authentik logout
@@ -163,15 +167,16 @@ func (h *AuthHandlers) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 
 	if redirectToAuthentik {
 		// Add post logout redirect URL if needed
-		baseURL := h.authService.config.RedirectURL[:len(h.authService.config.RedirectURL)-len("/auth/callback")]
-		postLogoutURL := fmt.Sprintf("%s/auth/logged-out", baseURL)
+		redirectBaseURL := h.authService.config.RedirectURL[:len(h.authService.config.RedirectURL)-len("/auth/callback")]
+		postLogoutURL := fmt.Sprintf("%s%sauth/logged-out", redirectBaseURL, h.authService.basePath)
 		logoutURL += fmt.Sprintf("?post_logout_redirect_uri=%s", postLogoutURL)
 		http.Redirect(w, r, logoutURL, http.StatusTemporaryRedirect)
 		return
 	}
 
 	// Simple logout - just redirect to login page
-	http.Redirect(w, r, "/auth/login", http.StatusTemporaryRedirect)
+	loginURL := strings.TrimSuffix(h.authService.basePath, "/") + "/auth/login"
+	http.Redirect(w, r, loginURL, http.StatusTemporaryRedirect)
 }
 
 // LoggedOutHandler shows a simple logged out page
@@ -195,7 +200,7 @@ func (h *AuthHandlers) LoggedOutHandler(w http.ResponseWriter, r *http.Request) 
     <div class="container">
         <h1>Logged Out</h1>
         <p class="message">You have been successfully logged out.</p>
-        <a href="/auth/login" class="btn">Log In Again</a>
+        <a href="auth/login" class="btn">Log In Again</a>
     </div>
 </body>
 </html>`

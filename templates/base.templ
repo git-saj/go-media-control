@@ -1,19 +1,19 @@
 package templates
 
-templ Base(content templ.Component) {
+templ Base(content templ.Component, basePath string) {
 	<!DOCTYPE html>
 	<html lang="en">
 		<head>
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<title>go-media-control</title>
-			<link rel="stylesheet" href="/static/css/styles.css"/>
-			<link rel="icon" type="image/png" sizes="16x16" href="/static/img/golang-16.png"/>
-			<link rel="icon" type="image/png" sizes="32x32" href="/static/img/golang-32.png"/>
-			<link rel="icon" type="image/png" sizes="96x96" href="/static/img/golang-96.png"/>
-			<link rel="icon" type="image/png" sizes="120x120" href="/static/img/golang-120.png"/>
-			<script src="/static/js/htmx.min.js"></script>
-			<script src="/static/js/form-json.js"></script>
+			<link rel="stylesheet" href={ basePath + "static/css/styles.css" }/>
+			<link rel="icon" type="image/png" sizes="16x16" href={ basePath + "static/img/golang-16.png" }/>
+			<link rel="icon" type="image/png" sizes="32x32" href={ basePath + "static/img/golang-32.png" }/>
+			<link rel="icon" type="image/png" sizes="96x96" href={ basePath + "static/img/golang-96.png" }/>
+			<link rel="icon" type="image/png" sizes="120x120" href={ basePath + "static/img/golang-120.png" }/>
+			<script src={ basePath + "static/js/htmx.min.js" }></script>
+			<script src={ basePath + "static/js/form-json.js" }></script>
 		</head>
 		<body class="bg-base-100 min-h-screen flex flex-col items-center">
 			@content

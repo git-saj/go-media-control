@@ -22,6 +22,7 @@ type AuthService struct {
 	provider     *oidc.Provider
 	oauth2Config oauth2.Config
 	store        *sessions.CookieStore
+	basePath     string
 }
 
 // UserInfo contains basic user information from OIDC
@@ -76,6 +77,7 @@ func NewAuthService(cfg *config.Config, logger *slog.Logger) (*AuthService, erro
 		provider:     provider,
 		oauth2Config: oauth2Config,
 		store:        store,
+		basePath:     cfg.BasePath,
 	}, nil
 }
 
@@ -195,7 +197,9 @@ func (a *AuthService) ClearSession(w http.ResponseWriter, r *http.Request) error
 func (a *AuthService) RequireAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Skip auth for login/callback endpoints
-		if r.URL.Path == "/auth/login" || r.URL.Path == "/auth/callback" {
+		authLoginPath := strings.TrimSuffix(a.basePath, "/") + "/auth/login"
+		authCallbackPath := strings.TrimSuffix(a.basePath, "/") + "/auth/callback"
+		if r.URL.Path == authLoginPath || r.URL.Path == authCallbackPath {
 			next.ServeHTTP(w, r)
 			return
 		}
@@ -203,7 +207,8 @@ func (a *AuthService) RequireAuth(next http.Handler) http.Handler {
 		userInfo, err := a.ValidateSession(r)
 		if err != nil {
 			a.logger.Debug("Authentication required", "error", err, "path", r.URL.Path)
-			http.Redirect(w, r, "/auth/login", http.StatusTemporaryRedirect)
+			loginURL := strings.TrimSuffix(a.basePath, "/") + "/auth/login"
+			http.Redirect(w, r, loginURL, http.StatusTemporaryRedirect)
 			return
 		}
 

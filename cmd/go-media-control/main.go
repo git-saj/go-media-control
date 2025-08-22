@@ -49,49 +49,54 @@ func main() {
 	r.Use(middleware.Logger)    // Log requests
 	r.Use(middleware.Recoverer) // Recover from panics
 
-	// Public routes (no authentication required)
-	r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`{"status":"ok","service":"go-media-control"}`))
-	})
-
-	if !cfg.DisableAuth {
-		// Authentication routes (no auth required)
-		r.Route("/auth", func(r chi.Router) {
-			r.Get("/login", authHandlers.LoginHandler)
-			r.Get("/callback", authHandlers.CallbackHandler)
-			r.Get("/logout", authHandlers.LogoutHandler)
-			r.Get("/logged-out", authHandlers.LoggedOutHandler)
-			r.Get("/user", authHandlers.UserInfoHandler) // For debugging
+	// Mount all routes under the base path
+	r.Route(cfg.BasePath[:len(cfg.BasePath)-1], func(r chi.Router) {
+		// Public routes (no authentication required)
+		r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusOK)
+			w.Write([]byte(`{"status":"ok","service":"go-media-control"}`))
 		})
 
-		// Protected routes (authentication required)
-		r.Group(func(r chi.Router) {
-			r.Use(authService.RequireAuth) // Apply authentication middleware
+		if !cfg.DisableAuth {
+			// Authentication routes (no auth required)
+			r.Route("/auth", func(r chi.Router) {
+				r.Get("/login", authHandlers.LoginHandler)
+				r.Get("/callback", authHandlers.CallbackHandler)
+				r.Get("/logout", authHandlers.LogoutHandler)
+				r.Get("/logged-out", authHandlers.LoggedOutHandler)
+				r.Get("/user", authHandlers.UserInfoHandler) // For debugging
+			})
 
-			// Serve static files
-			r.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+			// Protected routes (authentication required)
+			r.Group(func(r chi.Router) {
+				r.Use(authService.RequireAuth) // Apply authentication middleware
 
-			// Define protected routes
+				// Serve static files with base path awareness
+				staticPrefix := cfg.BasePath + "static/"
+				r.Handle("/static/*", http.StripPrefix(staticPrefix, http.FileServer(http.Dir("static"))))
+
+				// Define protected routes
+				r.Get("/", h.HomeHandler)
+				r.Get("/api/media", h.MediaHandler)
+				r.Post("/api/send", h.SendHandler)
+				r.Post("/search", h.SearchHandler)
+				r.Get("/refresh", h.RefreshHandler)
+			})
+		} else {
+			// No authentication - all routes are public
+			// Serve static files with base path awareness
+			staticPrefix := cfg.BasePath + "static/"
+			r.Handle("/static/*", http.StripPrefix(staticPrefix, http.FileServer(http.Dir("static"))))
+
+			// Define public routes
 			r.Get("/", h.HomeHandler)
 			r.Get("/api/media", h.MediaHandler)
 			r.Post("/api/send", h.SendHandler)
 			r.Post("/search", h.SearchHandler)
 			r.Get("/refresh", h.RefreshHandler)
-		})
-	} else {
-		// No authentication - all routes are public
-		// Serve static files
-		r.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
-
-		// Define public routes
-		r.Get("/", h.HomeHandler)
-		r.Get("/api/media", h.MediaHandler)
-		r.Post("/api/send", h.SendHandler)
-		r.Post("/search", h.SearchHandler)
-		r.Get("/refresh", h.RefreshHandler)
-	}
+		}
+	}) // Close the base path route group
 
 	// Start server
 	logger.Info("Starting server", "port", cfg.Port)
