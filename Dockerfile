@@ -22,6 +22,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o /go-media-control ./cmd/go-media-contro
 
 # Stage 3: Final runtime image
 FROM alpine:3.19
+RUN apk --no-cache add ca-certificates wget
 WORKDIR /app
 COPY --from=go-builder /go-media-control .
 # Copy static files from go-builder (which has the properly built CSS)
