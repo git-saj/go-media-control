@@ -19,6 +19,7 @@ type Config struct {
 	ClientSecret  string
 	RedirectURL   string
 	SessionSecret string
+	DisableAuth   bool
 }
 
 // LoadConfig reads the environment variables and returns a Config struct
@@ -36,6 +37,7 @@ func LoadConfig() (*Config, error) {
 		ClientSecret:  os.Getenv("AUTHENTIK_CLIENT_SECRET"),
 		RedirectURL:   os.Getenv("AUTHENTIK_REDIRECT_URL"),
 		SessionSecret: os.Getenv("SESSION_SECRET"),
+		DisableAuth:   os.Getenv("DISABLE_AUTH") == "true",
 	}
 
 	// Validate required fields
@@ -51,20 +53,24 @@ func LoadConfig() (*Config, error) {
 	if cfg.DiscordWebhook == "" {
 		return nil, fmt.Errorf("DISCORD_WEBHOOK is required")
 	}
-	if cfg.AuthentikURL == "" {
-		return nil, fmt.Errorf("AUTHENTIK_URL is required")
-	}
-	if cfg.ClientID == "" {
-		return nil, fmt.Errorf("AUTHENTIK_CLIENT_ID is required")
-	}
-	if cfg.ClientSecret == "" {
-		return nil, fmt.Errorf("AUTHENTIK_CLIENT_SECRET is required")
-	}
-	if cfg.RedirectURL == "" {
-		return nil, fmt.Errorf("AUTHENTIK_REDIRECT_URL is required")
-	}
-	if cfg.SessionSecret == "" {
-		return nil, fmt.Errorf("SESSION_SECRET is required")
+
+	// Only require auth config if auth is not disabled
+	if !cfg.DisableAuth {
+		if cfg.AuthentikURL == "" {
+			return nil, fmt.Errorf("AUTHENTIK_URL is required")
+		}
+		if cfg.ClientID == "" {
+			return nil, fmt.Errorf("AUTHENTIK_CLIENT_ID is required")
+		}
+		if cfg.ClientSecret == "" {
+			return nil, fmt.Errorf("AUTHENTIK_CLIENT_SECRET is required")
+		}
+		if cfg.RedirectURL == "" {
+			return nil, fmt.Errorf("AUTHENTIK_REDIRECT_URL is required")
+		}
+		if cfg.SessionSecret == "" {
+			return nil, fmt.Errorf("SESSION_SECRET is required")
+		}
 	}
 
 	// Set a default command prefix if not provided
