@@ -20,6 +20,8 @@ type Handlers struct {
 	discordClient *discord.WebhookClient
 	commandPrefix string
 	basePath      string
+	cfg           *config.Config
+	hasAuth       bool
 }
 
 // NewHandlers creates a new Handlers instance
@@ -30,8 +32,10 @@ func NewHandlers(logger *slog.Logger, cfg *config.Config) *Handlers {
 		discordClient: discord.NewWebhookClient(cfg.DiscordWebhook),
 		commandPrefix: cfg.CommandPrefix,
 		basePath:      cfg.BasePath,
+		cfg:           cfg,
+		hasAuth:       !cfg.DisableAuth,
 	}
-	h.logger.Info("Handlers initialized", "xtream_baseurl", cfg.XtreamBaseURL, "base_path", cfg.BasePath)
+	h.logger.Info("Handlers initialized", "xtream_baseurl", cfg.XtreamBaseURL, "base_path", cfg.BasePath, "has_auth", h.hasAuth)
 	return h
 }
 
@@ -77,37 +81,57 @@ func (h *Handlers) HomeHandler(w http.ResponseWriter, r *http.Request) {
 	// Check if this is an HTMX request for partial rendering
 	isHTMX := r.Header.Get("HX-Request") == "true"
 	if isHTMX {
-		templates.Results(paginated, page, limit, total, h.basePath).Render(r.Context(), w)
+		templates.Results(paginated, page, limit, total, h.basePath, "").Render(r.Context(), w)
 	} else {
-		templates.Home(paginated, page, limit, total, h.basePath).Render(r.Context(), w)
+
+		templates.Results(paginated, page, limit, total, h.basePath, "").Render(r.Context(), w)
 	}
 }
 
 // SearchHandler filters channels based on search query with pagination
 func (h *Handlers) SearchHandler(w http.ResponseWriter, r *http.Request) {
-	query := r.FormValue("query")
+	var query, pageStr, limitStr, categoryStr string
+	if r.Method == "GET" {
+		query = r.URL.Query().Get("query")
+		pageStr = r.URL.Query().Get("page")
+		limitStr = r.URL.Query().Get("limit")
+		categoryStr = r.URL.Query().Get("category")
+	} else {
+		query = r.FormValue("query")
+		pageStr = r.FormValue("page")
+		limitStr = r.FormValue("limit")
+		categoryStr = r.FormValue("category")
+	}
+
 	media, err := h.xtreamClient.GetLiveStreams()
 	if err != nil {
 		h.logger.Error("Failed to fetch media for search", "error", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
-
 	// Filter channels
 	var filtered []xtream.MediaItem
-	if query != "" { // Only filter if query is provided
+	if categoryStr != "" {
 		for _, ch := range media {
-			if strings.Contains(strings.ToLower(ch.Name), strings.ToLower(query)) {
+			if ch.CategoryID == categoryStr {
 				filtered = append(filtered, ch)
 			}
 		}
 	} else {
-		filtered = media // Use full list if no query
+		filtered = media
 	}
 
-	// Get page and limit from form values (default: page=1, limit=15)
-	pageStr := r.FormValue("page")
-	limitStr := r.FormValue("limit")
+	if query != "" {
+		var nameFiltered []xtream.MediaItem
+		for _, ch := range filtered {
+			if strings.Contains(strings.ToLower(ch.Name), strings.ToLower(query)) {
+				nameFiltered = append(nameFiltered, ch)
+			}
+		}
+		filtered = nameFiltered
+	}
+
+	// Get page and limit (default: page=1, limit=15)
 	page, _ := strconv.Atoi(pageStr)
 	limit, _ := strconv.Atoi(limitStr)
 	if limit < 1 {
@@ -121,18 +145,18 @@ func (h *Handlers) SearchHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	paginated, total := paginate(filtered, page, limit)
-	templates.Results(paginated, page, limit, total, h.basePath).Render(r.Context(), w)
+	templates.Results(paginated, page, limit, total, h.basePath, "").Render(r.Context(), w)
 }
 
 // RefreshCacheHandler clears the cache and returns refreshed results
 func (h *Handlers) RefreshHandler(w http.ResponseWriter, r *http.Request) {
 	// Clear the client's cache
 	h.xtreamClient.ClearCache()
+	h.xtreamClient.Cache.Clear()
 
-	// Fetch fresh data (will re-cache automatically)
 	media, err := h.xtreamClient.GetLiveStreams()
 	if err != nil {
-		h.logger.Error("Failed to fetch media for refresh", "error", err)
+		h.logger.Error("Failed to fetch media", "error", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
@@ -150,7 +174,7 @@ func (h *Handlers) RefreshHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	paginated, total := paginate(media, page, limit)
-	templates.Results(paginated, page, limit, total, h.basePath).Render(r.Context(), w)
+	templates.Results(paginated, page, limit, total, h.basePath, "").Render(r.Context(), w)
 }
 
 // MediaHandler handles GET /api/media requests

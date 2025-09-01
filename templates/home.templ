@@ -2,38 +2,65 @@ package templates
 
 import "github.com/git-saj/go-media-control/internal/xtream"
 import "fmt"
+import "net/url"
 
-templ Home(channels []xtream.MediaItem, page, limit, total int, basePath string) {
-	@Base(homeContent(channels, page, limit, total, basePath), basePath)
+templ Home(channels []xtream.MediaItem, page, limit, total int, basePath string, hasAuth bool, categories []xtream.Category) {
+	@Base(homeContent(channels, page, limit, total, basePath, hasAuth, categories), basePath)
 }
 
-templ homeContent(channels []xtream.MediaItem, page, limit, total int, basePath string) {
+templ homeContent(channels []xtream.MediaItem, page, limit, total int, basePath string, hasAuth bool, categories []xtream.Category) {
 	<div class="w-full max-w-7xl p-6 min-h-screen flex flex-col">
 		<!-- Navbar -->
 		<div class="navbar bg-base-100 shadow-sm flex-shrink-0 mb-6">
 			<div class="flex-1">
 				<a href={ templ.SafeURL(basePath) } class="btn btn-ghost text-xl">go-media-control</a>
+				<span class="badge badge-ghost ml-2">{ fmt.Sprintf("%d channels", total) }</span>
 			</div>
-			<div class="flex-none">
+			<div class="flex-none flex items-center gap-2">
+				<input type="checkbox" class="toggle toggle-primary" onchange="document.documentElement.setAttribute('data-theme', this.checked ? 'dark' : 'light')" title="Toggle Dark Mode"/>
+				<button class="btn btn-square btn-ghost" onclick="navigator.clipboard.writeText(window.location.href).then(() => alert('URL copied!'))" title="Copy current URL">
+					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block h-5 w-5 stroke-current">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+					</svg>
+				</button>
 				<button class="btn btn-square btn-ghost" hx-get={ basePath + "refresh" } hx-target="#results" hx-swap="innerHTML">
 					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block h-5 w-5 stroke-current">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 3V8M21 8H16M21 8L18 5.29168C16.4077 3.86656 14.3051 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21C16.2832 21 19.8675 18.008 20.777 14"></path>
 					</svg>
 				</button>
+				if hasAuth {
+					<a href={ templ.SafeURL(basePath + "auth/logout") } class="btn">Logout</a>
+				}
 			</div>
 		</div>
-		<!-- Search Bar (static, top) -->
-		<div class="mb-6 flex-shrink-0">
+		<!-- Filters (static, top) -->
+		<div class="mb-6 flex-shrink-0 flex gap-2">
+			<select
+				class="select select-bordered"
+				name="category"
+				hx-post={ basePath + "search" }
+				hx-target="#results"
+				hx-trigger="change"
+				hx-vals={ fmt.Sprintf(`{"query":"","page":"1","limit":"%d"}`, limit) }
+			>
+				<option value="">All Categories</option>
+				for _, cat := range categories {
+					<option value={ cat.CategoryID }>{ cat.CategoryName }</option>
+				}
+			</select>
 			<input
+				id="search-input"
 				type="text"
 				placeholder="Search channels..."
-				class="input input-bordered w-full"
+				class="input input-bordered flex-1"
 				hx-post={ basePath + "search" }
 				hx-target="#results"
 				hx-trigger="keyup delay:200ms"
 				name="query"
-				hx-vals={ fmt.Sprintf(`{"limit": "%d"}`, limit) }
+				hx-include="[name='category']"
+				hx-vals={ fmt.Sprintf(`{"page":"1","limit":"%d"}`, limit) }
 			/>
+			<button type="button" class="btn btn-outline btn-secondary" hx-post="/search" hx-vals='{"query":"","category":"","page":"1","limit":"15"}' hx-target="#results" onclick="document.getElementById('category-select').value=''; document.getElementById('search-input').value='';">Clear Filters</button>
 		</div>
 		<!-- Results (cards + pagination) -->
 		<div id="results" class="flex-grow flex flex-col">
@@ -49,7 +76,7 @@ templ homeContent(channels []xtream.MediaItem, page, limit, total int, basePath 
 					hx-push-url="true"
 					class="btn btn-primary { page <= 1 ? 'btn-disabled' : '' }"
 				>Previous</a>
-				<span>Page { fmt.Sprintf("%d", page) } of { fmt.Sprintf("%d", (total + limit - 1) / limit) }</span>
+				<span>Page { fmt.Sprintf("%d", page) } of { fmt.Sprintf("%d", (total + limit - 1) / limit) } ({ fmt.Sprintf("%d", total) } total channels)</span>
 				<a
 					href={ templ.SafeURL(fmt.Sprintf("%s?page=%d&limit=%d", basePath, page+1, limit)) }
 					hx-get={ templ.SafeURL(fmt.Sprintf("%s?page=%d&limit=%d", basePath, page+1, limit)) }
@@ -62,22 +89,26 @@ templ homeContent(channels []xtream.MediaItem, page, limit, total int, basePath 
 	</div>
 }
 
-templ Results(channels []xtream.MediaItem, page, limit, total int, basePath string) {
+templ Results(channels []xtream.MediaItem, page, limit, total int, basePath string, query string) {
 	<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 max-h-[calc(100vh-12rem)] overflow-auto">
 		@ChannelCards(channels, basePath)
 	</div>
 	<div class="mt-6 flex justify-between flex-shrink-0 bg-base-100 py-2">
 		<a
-			href={ templ.SafeURL(fmt.Sprintf("%s?page=%d&limit=%d", basePath, page-1, limit)) }
-			hx-get={ templ.SafeURL(fmt.Sprintf("%s?page=%d&limit=%d", basePath, page-1, limit)) }
+			href={ templ.SafeURL(fmt.Sprintf("%ssearch?page=%d&limit=%d&query=%s", basePath, page-1, limit, url.QueryEscape(query))) }
+			hx-post={ basePath + "search" }
+			hx-vals={ fmt.Sprintf(`{"query":"%s","page":"%d","limit":"%d"}`, query, page-1, limit) }
+			hx-include="[name='category']"
 			hx-target="#results"
 			hx-push-url="true"
 			class="btn btn-primary { page <= 1 ? 'btn-disabled' : '' }"
 		>Previous</a>
 		<span>Page { fmt.Sprintf("%d", page) } of { fmt.Sprintf("%d", (total + limit - 1) / limit) }</span>
 		<a
-			href={ templ.SafeURL(fmt.Sprintf("%s?page=%d&limit=%d", basePath, page+1, limit)) }
-			hx-get={ templ.SafeURL(fmt.Sprintf("%s?page=%d&limit=%d", basePath, page+1, limit)) }
+			href={ templ.SafeURL(fmt.Sprintf("%ssearch?page=%d&limit=%d&query=%s", basePath, page+1, limit, url.QueryEscape(query))) }
+			hx-post={ basePath + "search" }
+			hx-vals={ fmt.Sprintf(`{"query":"%s","page":"%d","limit":"%d"}`, query, page+1, limit) }
+			hx-include="[name='category']"
 			hx-target="#results"
 			hx-push-url="true"
 			class="btn btn-primary { page * limit >= total ? 'btn-disabled' : '' }"
@@ -88,7 +119,7 @@ templ Results(channels []xtream.MediaItem, page, limit, total int, basePath stri
 templ ChannelCards(channels []xtream.MediaItem, basePath string) {
 	for _, ch := range channels {
 		<button
-			class="card bg-base-200 shadow-xl flex flex-col min-w-0 w-full h-64 hover:bg-base-300 transition-colors cursor-pointer"
+			class="card bg-base-200 shadow-xl flex flex-col min-w-0 w-full h-64 hover:bg-base-300 hover:scale-105 transition-all duration-300 cursor-pointer"
 			hx-post={ basePath + "api/send" }
 			hx-vals={ fmt.Sprintf(`{"channel_id": %d}`, ch.StreamID) }
 			hx-target="body"
@@ -98,8 +129,15 @@ templ ChannelCards(channels []xtream.MediaItem, basePath string) {
 			<figure class="flex-shrink-0 h-40 w-full">
 				<img src={ ch.Logo } alt={ ch.Name } class="max-h-full max-w-full object-contain"/>
 			</figure>
-			<div class="card-body flex-grow flex items-center justify-center">
+			<div class="card-body flex-grow flex items-center justify-center relative">
 				<h2 class="card-title text-center text-sm md:text-base">{ ch.Name }</h2>
+				<div class="absolute bottom-2 right-2">
+					<button class="btn btn-xs btn-circle btn-ghost" onclick="navigator.clipboard.writeText('{ ch.StreamURL }').then(() => alert('URL copied!'))" title="Copy Stream URL">
+						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block h-4 w-4 stroke-current">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+						</svg>
+					</button>
+				</div>
 			</div>
 		</button>
 	}
