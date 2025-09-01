@@ -73,7 +73,14 @@ func (h *Handlers) HomeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	paginated, total := paginate(media, page, limit)
-	templates.Home(paginated, page, limit, total, h.basePath).Render(r.Context(), w)
+
+	// Check if this is an HTMX request for partial rendering
+	isHTMX := r.Header.Get("HX-Request") == "true"
+	if isHTMX {
+		templates.Results(paginated, page, limit, total, h.basePath).Render(r.Context(), w)
+	} else {
+		templates.Home(paginated, page, limit, total, h.basePath).Render(r.Context(), w)
+	}
 }
 
 // SearchHandler filters channels based on search query with pagination
@@ -120,7 +127,7 @@ func (h *Handlers) SearchHandler(w http.ResponseWriter, r *http.Request) {
 // RefreshCacheHandler clears the cache and returns refreshed results
 func (h *Handlers) RefreshHandler(w http.ResponseWriter, r *http.Request) {
 	// Clear the client's cache
-	h.xtreamClient.Cache.Clear()
+	h.xtreamClient.ClearCache()
 
 	// Fetch fresh data (will re-cache automatically)
 	media, err := h.xtreamClient.GetLiveStreams()
@@ -177,22 +184,8 @@ func (h *Handlers) SendHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	media, err := h.xtreamClient.GetLiveStreams()
-	if err != nil {
-		h.logger.Error("Failed to fetch media", "error", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
-	}
-
-	var streamURL string
-	for _, item := range media {
-		if item.StreamID == req.ChannelID {
-			streamURL = item.StreamURL
-			break
-		}
-	}
-
-	if streamURL == "" {
+	streamURL, ok := h.xtreamClient.GetStreamURL(req.ChannelID)
+	if !ok {
 		h.logger.Warn("Channel not found", "channel_id", req.ChannelID)
 		http.Error(w, "Channel not found", http.StatusNotFound)
 		return

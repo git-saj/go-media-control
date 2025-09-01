@@ -1,3 +1,4 @@
+// go-media-control/internal/discord/webhook.go
 package discord
 
 import (
@@ -7,7 +8,7 @@ import (
 	"net/http"
 )
 
-// WedhookClient sends messages to a Discord webhook
+// WebhookClient sends messages to a Discord webhook
 type WebhookClient struct {
 	URL        string
 	httpClient *http.Client

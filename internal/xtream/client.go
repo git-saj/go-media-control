@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"sync"
 	"time"
 
 	"github.com/git-saj/go-media-control/internal/cache"
@@ -17,6 +18,8 @@ type Client struct {
 	Password   string
 	Cache      *cache.Cache[[]MediaItem]
 	httpClient *http.Client
+	mu         sync.RWMutex
+	streamURLs map[int]string
 }
 
 // MediaItem represents a single media item from the Xtream Code API
@@ -35,6 +38,7 @@ func NewClient(cfg *config.Config) *Client {
 		Password:   cfg.XtreamPassword,
 		Cache:      cache.New[[]MediaItem](),
 		httpClient: &http.Client{},
+		streamURLs: make(map[int]string),
 	}
 }
 
@@ -93,5 +97,29 @@ func (c *Client) GetLiveStreams() ([]MediaItem, error) {
 	// Store in cache with a 24-hour TTL
 	c.Cache.Set(media, time.Hour*24)
 
+	// Populate the stream URL map
+	c.mu.Lock()
+	c.streamURLs = make(map[int]string, len(media))
+	for _, item := range media {
+		c.streamURLs[item.StreamID] = item.StreamURL
+	}
+	c.mu.Unlock()
+
 	return media, nil
+}
+
+// GetStreamURL retrieves the stream URL for a given stream ID
+func (c *Client) GetStreamURL(streamID int) (string, bool) {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	url, ok := c.streamURLs[streamID]
+	return url, ok
+}
+
+// ClearCache clears both the data cache and the URL map
+func (c *Client) ClearCache() {
+	c.Cache.Clear()
+	c.mu.Lock()
+	c.streamURLs = make(map[int]string)
+	c.mu.Unlock()
 }

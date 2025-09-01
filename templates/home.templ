@@ -44,11 +44,17 @@ templ homeContent(channels []xtream.MediaItem, page, limit, total int, basePath 
 			<div class="mt-6 flex justify-between flex-shrink-0 bg-base-100 py-2">
 				<a
 					href={ templ.SafeURL(fmt.Sprintf("%s?page=%d&limit=%d", basePath, page-1, limit)) }
+					hx-get={ templ.SafeURL(fmt.Sprintf("%s?page=%d&limit=%d", basePath, page-1, limit)) }
+					hx-target="#results"
+					hx-push-url="true"
 					class="btn btn-primary { page <= 1 ? 'btn-disabled' : '' }"
 				>Previous</a>
 				<span>Page { fmt.Sprintf("%d", page) } of { fmt.Sprintf("%d", (total + limit - 1) / limit) }</span>
 				<a
 					href={ templ.SafeURL(fmt.Sprintf("%s?page=%d&limit=%d", basePath, page+1, limit)) }
+					hx-get={ templ.SafeURL(fmt.Sprintf("%s?page=%d&limit=%d", basePath, page+1, limit)) }
+					hx-target="#results"
+					hx-push-url="true"
 					class="btn btn-primary { page * limit >= total ? 'btn-disabled' : '' }"
 				>Next</a>
 			</div>
@@ -63,11 +69,17 @@ templ Results(channels []xtream.MediaItem, page, limit, total int, basePath stri
 	<div class="mt-6 flex justify-between flex-shrink-0 bg-base-100 py-2">
 		<a
 			href={ templ.SafeURL(fmt.Sprintf("%s?page=%d&limit=%d", basePath, page-1, limit)) }
+			hx-get={ templ.SafeURL(fmt.Sprintf("%s?page=%d&limit=%d", basePath, page-1, limit)) }
+			hx-target="#results"
+			hx-push-url="true"
 			class="btn btn-primary { page <= 1 ? 'btn-disabled' : '' }"
 		>Previous</a>
 		<span>Page { fmt.Sprintf("%d", page) } of { fmt.Sprintf("%d", (total + limit - 1) / limit) }</span>
 		<a
 			href={ templ.SafeURL(fmt.Sprintf("%s?page=%d&limit=%d", basePath, page+1, limit)) }
+			hx-get={ templ.SafeURL(fmt.Sprintf("%s?page=%d&limit=%d", basePath, page+1, limit)) }
+			hx-target="#results"
+			hx-push-url="true"
 			class="btn btn-primary { page * limit >= total ? 'btn-disabled' : '' }"
 		>Next</a>
 	</div>
