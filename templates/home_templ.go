@@ -62,7 +62,7 @@ func homeContent(channels []xtream.MediaItem, page, limit, total int, basePath s
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"w-full max-w-7xl p-6 min-h-screen flex flex-col\"><!-- Navbar --><div class=\"navbar bg-base-100 shadow-sm flex-shrink-0 mb-6\"><div class=\"flex-1\"><a href=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"w-full max-w-7xl p-6 min-h-screen flex flex-col\"><!-- Navbar --><div class=\"navbar bg-base-100 shadow-sm shrink-0 mb-6\"><div class=\"flex-1\"><a href=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -116,7 +116,7 @@ func homeContent(channels []xtream.MediaItem, page, limit, total int, basePath s
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div></div><!-- Filters (static, top) --><div class=\"mb-6 flex-shrink-0 flex gap-2\"><select class=\"select select-bordered\" name=\"category\" hx-post=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div></div><!-- Filters (static, top) --><div class=\"mb-6 shrink-0 flex gap-2\"><select class=\"select select-bordered\" name=\"category\" hx-post=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -204,7 +204,7 @@ func homeContent(channels []xtream.MediaItem, page, limit, total int, basePath s
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "\"> <button type=\"button\" class=\"btn btn-outline btn-secondary\" hx-post=\"/search\" hx-vals=\"{&#34;query&#34;:&#34;&#34;,&#34;category&#34;:&#34;&#34;,&#34;page&#34;:&#34;1&#34;,&#34;limit&#34;:&#34;15&#34;}\" hx-target=\"#results\" onclick=\"document.getElementById(&#39;category-select&#39;).value=&#39;&#39;; document.getElementById(&#39;search-input&#39;).value=&#39;&#39;;\">Clear Filters</button></div><!-- Results (cards + pagination) --><div id=\"results\" class=\"flex-grow flex flex-col\"><div id=\"channel-list\" class=\"grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 max-h-[calc(100vh-12rem)] overflow-auto\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "\"> <button type=\"button\" class=\"btn btn-outline btn-secondary\" hx-post=\"/search\" hx-vals=\"{&#34;query&#34;:&#34;&#34;,&#34;category&#34;:&#34;&#34;,&#34;page&#34;:&#34;1&#34;,&#34;limit&#34;:&#34;15&#34;}\" hx-target=\"#results\" onclick=\"document.getElementById(&#39;category-select&#39;).value=&#39;&#39;; document.getElementById(&#39;search-input&#39;).value=&#39;&#39;;\">Clear Filters</button></div><!-- Results (cards + pagination) --><div id=\"results\" class=\"grow flex flex-col\"><div id=\"channel-list\" class=\"grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 max-h-[calc(100vh-12rem)] overflow-auto\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -212,7 +212,7 @@ func homeContent(channels []xtream.MediaItem, page, limit, total int, basePath s
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</div><!-- Pagination Controls (bottom) --><div class=\"mt-6 flex justify-between flex-shrink-0 bg-base-100 py-2\"><a href=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</div><!-- Pagination Controls (bottom) --><div class=\"mt-6 flex justify-between shrink-0 bg-base-100 py-2\"><a href=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -332,7 +332,7 @@ func Results(channels []xtream.MediaItem, page, limit, total int, basePath strin
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "</div><div class=\"mt-6 flex justify-between flex-shrink-0 bg-base-100 py-2\"><a href=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "</div><div class=\"mt-6 flex justify-between shrink-0 bg-base-100 py-2\"><a href=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -484,7 +484,7 @@ func ChannelCards(channels []xtream.MediaItem, basePath string) templ.Component 
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "\" hx-target=\"body\" hx-swap=\"none\" hx-ext=\"form-json\"><figure class=\"flex-shrink-0 h-40 w-full\"><img src=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "\" hx-target=\"body\" hx-swap=\"none\" hx-ext=\"form-json\"><figure class=\"shrink-0 h-40 w-full\"><img src=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -510,7 +510,7 @@ func ChannelCards(channels []xtream.MediaItem, basePath string) templ.Component 
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "\" class=\"max-h-full max-w-full object-contain\"></figure><div class=\"card-body flex-grow flex items-center justify-center relative\"><h2 class=\"card-title text-center text-sm md:text-base\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "\" class=\"max-h-full max-w-full object-contain\"></figure><div class=\"card-body grow flex items-center justify-center relative\"><h2 class=\"card-title text-center text-sm md:text-base\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

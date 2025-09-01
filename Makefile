@@ -1,8 +1,8 @@
 build-css:
-	npx tailwindcss -i static/css/input.css -o static/css/styles.css
+	npx @tailwindcss/cli -i static/css/input.css -o static/css/styles.css
 
 watch-css:
-	npx tailwindcss -i static/css/input.css -o static/css/styles.css --watch
+	npx @tailwindcss/cli -i static/css/input.css -o static/css/styles.css --watch
 
 generate-templ:
 	templ generate

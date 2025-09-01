@@ -11,7 +11,7 @@ templ Home(channels []xtream.MediaItem, page, limit, total int, basePath string,
 templ homeContent(channels []xtream.MediaItem, page, limit, total int, basePath string, hasAuth bool, categories []xtream.Category) {
 	<div class="w-full max-w-7xl p-6 min-h-screen flex flex-col">
 		<!-- Navbar -->
-		<div class="navbar bg-base-100 shadow-sm flex-shrink-0 mb-6">
+		<div class="navbar bg-base-100 shadow-sm shrink-0 mb-6">
 			<div class="flex-1">
 				<a href={ templ.SafeURL(basePath) } class="btn btn-ghost text-xl">go-media-control</a>
 				<span class="badge badge-ghost ml-2">{ fmt.Sprintf("%d channels", total) }</span>
@@ -34,7 +34,7 @@ templ homeContent(channels []xtream.MediaItem, page, limit, total int, basePath 
 			</div>
 		</div>
 		<!-- Filters (static, top) -->
-		<div class="mb-6 flex-shrink-0 flex gap-2">
+		<div class="mb-6 shrink-0 flex gap-2">
 			<select
 				class="select select-bordered"
 				name="category"
@@ -63,12 +63,12 @@ templ homeContent(channels []xtream.MediaItem, page, limit, total int, basePath 
 			<button type="button" class="btn btn-outline btn-secondary" hx-post="/search" hx-vals='{"query":"","category":"","page":"1","limit":"15"}' hx-target="#results" onclick="document.getElementById('category-select').value=''; document.getElementById('search-input').value='';">Clear Filters</button>
 		</div>
 		<!-- Results (cards + pagination) -->
-		<div id="results" class="flex-grow flex flex-col">
+		<div id="results" class="grow flex flex-col">
 			<div id="channel-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 max-h-[calc(100vh-12rem)] overflow-auto">
 				@ChannelCards(channels, basePath)
 			</div>
 			<!-- Pagination Controls (bottom) -->
-			<div class="mt-6 flex justify-between flex-shrink-0 bg-base-100 py-2">
+			<div class="mt-6 flex justify-between shrink-0 bg-base-100 py-2">
 				<a
 					href={ templ.SafeURL(fmt.Sprintf("%s?page=%d&limit=%d", basePath, page-1, limit)) }
 					hx-get={ templ.SafeURL(fmt.Sprintf("%s?page=%d&limit=%d", basePath, page-1, limit)) }
@@ -93,7 +93,7 @@ templ Results(channels []xtream.MediaItem, page, limit, total int, basePath stri
 	<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 max-h-[calc(100vh-12rem)] overflow-auto">
 		@ChannelCards(channels, basePath)
 	</div>
-	<div class="mt-6 flex justify-between flex-shrink-0 bg-base-100 py-2">
+	<div class="mt-6 flex justify-between shrink-0 bg-base-100 py-2">
 		<a
 			href={ templ.SafeURL(fmt.Sprintf("%ssearch?page=%d&limit=%d&query=%s", basePath, page-1, limit, url.QueryEscape(query))) }
 			hx-post={ basePath + "search" }
@@ -126,10 +126,10 @@ templ ChannelCards(channels []xtream.MediaItem, basePath string) {
 			hx-swap="none"
 			hx-ext="form-json"
 		>
-			<figure class="flex-shrink-0 h-40 w-full">
+			<figure class="shrink-0 h-40 w-full">
 				<img src={ ch.Logo } alt={ ch.Name } class="max-h-full max-w-full object-contain"/>
 			</figure>
-			<div class="card-body flex-grow flex items-center justify-center relative">
+			<div class="card-body grow flex items-center justify-center relative">
 				<h2 class="card-title text-center text-sm md:text-base">{ ch.Name }</h2>
 				<div class="absolute bottom-2 right-2">
 					<button class="btn btn-xs btn-circle btn-ghost" onclick="navigator.clipboard.writeText('{ ch.StreamURL }').then(() => alert('URL copied!'))" title="Copy Stream URL">
