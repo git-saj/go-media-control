@@ -4,7 +4,6 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
-	"path/filepath"
 	"strings"
 
 	"github.com/git-saj/go-media-control/handlers"
@@ -26,13 +25,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Compute static directory path
-	wd, err := os.Getwd()
-	if err != nil {
-		logger.Error("Failed to get working directory", "error", err)
-		os.Exit(1)
-	}
-	staticDir := filepath.Join(wd, "static")
+	staticDir := "static"
 
 	// Initialize handlers with config values
 	h := handlers.NewHandlers(logger, cfg)

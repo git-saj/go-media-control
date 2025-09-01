@@ -84,14 +84,14 @@ func homeContent(channels []xtream.MediaItem, page, limit, total int, basePath s
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</span></div><div class=\"flex-none flex items-center gap-2\"><input type=\"checkbox\" class=\"toggle toggle-primary\" onchange=\"document.documentElement.setAttribute(&#39;data-theme&#39;, this.checked ? &#39;dark&#39; : &#39;light&#39;)\" title=\"Toggle Dark Mode\"> <button class=\"btn btn-square btn-ghost\" onclick=\"navigator.clipboard.writeText(window.location.href).then(() =&gt; alert(&#39;URL copied!&#39;))\" title=\"Copy current URL\"><svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" class=\"inline-block h-5 w-5 stroke-current\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z\"></path></svg></button> <button class=\"btn btn-square btn-ghost\" hx-get=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</span></div><div class=\"flex-none flex items-center gap-2\"><button class=\"btn btn-square btn-ghost\" hx-get=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(basePath + "refresh")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/home.templ`, Line: 26, Col: 74}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/home.templ`, Line: 20, Col: 74}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -123,7 +123,7 @@ func homeContent(channels []xtream.MediaItem, page, limit, total int, basePath s
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(basePath + "search")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/home.templ`, Line: 41, Col: 33}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/home.templ`, Line: 35, Col: 33}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
@@ -136,7 +136,7 @@ func homeContent(channels []xtream.MediaItem, page, limit, total int, basePath s
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf(`{"query":"","page":"1","limit":"%d"}`, limit))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/home.templ`, Line: 44, Col: 72}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/home.templ`, Line: 38, Col: 72}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 		if templ_7745c5c3_Err != nil {
@@ -154,7 +154,7 @@ func homeContent(channels []xtream.MediaItem, page, limit, total int, basePath s
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(cat.CategoryID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/home.templ`, Line: 48, Col: 35}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/home.templ`, Line: 42, Col: 35}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
@@ -167,7 +167,7 @@ func homeContent(channels []xtream.MediaItem, page, limit, total int, basePath s
 			var templ_7745c5c3_Var10 string
 			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(cat.CategoryName)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/home.templ`, Line: 48, Col: 56}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/home.templ`, Line: 42, Col: 56}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 			if templ_7745c5c3_Err != nil {
@@ -185,7 +185,7 @@ func homeContent(channels []xtream.MediaItem, page, limit, total int, basePath s
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(basePath + "search")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/home.templ`, Line: 56, Col: 33}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/home.templ`, Line: 50, Col: 33}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {
@@ -198,7 +198,7 @@ func homeContent(channels []xtream.MediaItem, page, limit, total int, basePath s
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf(`{"page":"1","limit":"%d"}`, limit))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/home.templ`, Line: 61, Col: 61}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/home.templ`, Line: 55, Col: 61}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
@@ -228,7 +228,7 @@ func homeContent(channels []xtream.MediaItem, page, limit, total int, basePath s
 		var templ_7745c5c3_Var14 string
 		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(templ.SafeURL(fmt.Sprintf("%s?page=%d&limit=%d", basePath, page-1, limit)))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/home.templ`, Line: 74, Col: 88}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/home.templ`, Line: 68, Col: 88}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 		if templ_7745c5c3_Err != nil {
@@ -241,7 +241,7 @@ func homeContent(channels []xtream.MediaItem, page, limit, total int, basePath s
 		var templ_7745c5c3_Var15 string
 		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", page))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/home.templ`, Line: 79, Col: 40}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/home.templ`, Line: 73, Col: 40}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 		if templ_7745c5c3_Err != nil {
@@ -254,7 +254,7 @@ func homeContent(channels []xtream.MediaItem, page, limit, total int, basePath s
 		var templ_7745c5c3_Var16 string
 		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", (total+limit-1)/limit))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/home.templ`, Line: 79, Col: 94}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/home.templ`, Line: 73, Col: 94}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 		if templ_7745c5c3_Err != nil {
@@ -267,7 +267,7 @@ func homeContent(channels []xtream.MediaItem, page, limit, total int, basePath s
 		var templ_7745c5c3_Var17 string
 		templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", total))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/home.templ`, Line: 79, Col: 124}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/home.templ`, Line: 73, Col: 124}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 		if templ_7745c5c3_Err != nil {
@@ -289,7 +289,7 @@ func homeContent(channels []xtream.MediaItem, page, limit, total int, basePath s
 		var templ_7745c5c3_Var19 string
 		templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(templ.SafeURL(fmt.Sprintf("%s?page=%d&limit=%d", basePath, page+1, limit)))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/home.templ`, Line: 82, Col: 88}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/home.templ`, Line: 76, Col: 88}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 		if templ_7745c5c3_Err != nil {
@@ -348,7 +348,7 @@ func Results(channels []xtream.MediaItem, page, limit, total int, basePath strin
 		var templ_7745c5c3_Var22 string
 		templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(basePath + "search")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/home.templ`, Line: 99, Col: 32}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/home.templ`, Line: 93, Col: 32}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 		if templ_7745c5c3_Err != nil {
@@ -361,7 +361,7 @@ func Results(channels []xtream.MediaItem, page, limit, total int, basePath strin
 		var templ_7745c5c3_Var23 string
 		templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf(`{"query":"%s","page":"%d","limit":"%d"}`, query, page-1, limit))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/home.templ`, Line: 100, Col: 89}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/home.templ`, Line: 94, Col: 89}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 		if templ_7745c5c3_Err != nil {
@@ -374,7 +374,7 @@ func Results(channels []xtream.MediaItem, page, limit, total int, basePath strin
 		var templ_7745c5c3_Var24 string
 		templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", page))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/home.templ`, Line: 106, Col: 38}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/home.templ`, Line: 100, Col: 38}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
 		if templ_7745c5c3_Err != nil {
@@ -387,7 +387,7 @@ func Results(channels []xtream.MediaItem, page, limit, total int, basePath strin
 		var templ_7745c5c3_Var25 string
 		templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", (total+limit-1)/limit))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/home.templ`, Line: 106, Col: 92}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/home.templ`, Line: 100, Col: 92}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
 		if templ_7745c5c3_Err != nil {
@@ -409,7 +409,7 @@ func Results(channels []xtream.MediaItem, page, limit, total int, basePath strin
 		var templ_7745c5c3_Var27 string
 		templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.JoinStringErrs(basePath + "search")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/home.templ`, Line: 109, Col: 32}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/home.templ`, Line: 103, Col: 32}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var27))
 		if templ_7745c5c3_Err != nil {
@@ -422,7 +422,7 @@ func Results(channels []xtream.MediaItem, page, limit, total int, basePath strin
 		var templ_7745c5c3_Var28 string
 		templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf(`{"query":"%s","page":"%d","limit":"%d"}`, query, page+1, limit))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/home.templ`, Line: 110, Col: 89}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/home.templ`, Line: 104, Col: 89}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var28))
 		if templ_7745c5c3_Err != nil {
@@ -465,7 +465,7 @@ func ChannelCards(channels []xtream.MediaItem, basePath string) templ.Component 
 			var templ_7745c5c3_Var30 string
 			templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs(basePath + "api/send")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/home.templ`, Line: 123, Col: 34}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/home.templ`, Line: 117, Col: 34}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
 			if templ_7745c5c3_Err != nil {
@@ -478,7 +478,7 @@ func ChannelCards(channels []xtream.MediaItem, basePath string) templ.Component 
 			var templ_7745c5c3_Var31 string
 			templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf(`{"channel_id": %d}`, ch.StreamID))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/home.templ`, Line: 124, Col: 59}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/home.templ`, Line: 118, Col: 59}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var31))
 			if templ_7745c5c3_Err != nil {
@@ -491,7 +491,7 @@ func ChannelCards(channels []xtream.MediaItem, basePath string) templ.Component 
 			var templ_7745c5c3_Var32 string
 			templ_7745c5c3_Var32, templ_7745c5c3_Err = templ.JoinStringErrs(ch.Logo)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/home.templ`, Line: 130, Col: 22}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/home.templ`, Line: 124, Col: 22}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var32))
 			if templ_7745c5c3_Err != nil {
@@ -504,7 +504,7 @@ func ChannelCards(channels []xtream.MediaItem, basePath string) templ.Component 
 			var templ_7745c5c3_Var33 string
 			templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.JoinStringErrs(ch.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/home.templ`, Line: 130, Col: 38}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/home.templ`, Line: 124, Col: 38}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var33))
 			if templ_7745c5c3_Err != nil {
@@ -517,13 +517,13 @@ func ChannelCards(channels []xtream.MediaItem, basePath string) templ.Component 
 			var templ_7745c5c3_Var34 string
 			templ_7745c5c3_Var34, templ_7745c5c3_Err = templ.JoinStringErrs(ch.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/home.templ`, Line: 133, Col: 69}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/home.templ`, Line: 127, Col: 69}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var34))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "</h2><div class=\"absolute bottom-2 right-2\"><button class=\"btn btn-xs btn-circle btn-ghost\" onclick=\"navigator.clipboard.writeText(&#39;{ ch.StreamURL }&#39;).then(() =&gt; alert(&#39;URL copied!&#39;))\" title=\"Copy Stream URL\"><svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" class=\"inline-block h-4 w-4 stroke-current\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z\"></path></svg></button></div></div></button>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "</h2></div></button>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

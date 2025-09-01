@@ -78,13 +78,20 @@ func (h *Handlers) HomeHandler(w http.ResponseWriter, r *http.Request) {
 
 	paginated, total := paginate(media, page, limit)
 
+	categories, err := h.xtreamClient.GetCategories()
+	if err != nil {
+		h.logger.Error("Failed to fetch categories", "error", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
 	// Check if this is an HTMX request for partial rendering
 	isHTMX := r.Header.Get("HX-Request") == "true"
 	if isHTMX {
 		templates.Results(paginated, page, limit, total, h.basePath, "").Render(r.Context(), w)
 	} else {
 
-		templates.Results(paginated, page, limit, total, h.basePath, "").Render(r.Context(), w)
+		templates.Home(paginated, page, limit, total, h.basePath, h.hasAuth, categories).Render(r.Context(), w)
 	}
 }
 
