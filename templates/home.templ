@@ -30,6 +30,7 @@ templ homeContent(channels []xtream.MediaItem, page, limit, total int, basePath 
 		<!-- Filters (static, top) -->
 		<div class="mb-6 shrink-0 flex gap-2">
 			<select
+				id="category-select"
 				class="select select-bordered"
 				name="category"
 				hx-post={ basePath + "search" }
@@ -54,7 +55,7 @@ templ homeContent(channels []xtream.MediaItem, page, limit, total int, basePath 
 				hx-include="[name='category']"
 				hx-vals={ fmt.Sprintf(`{"page":"1","limit":"%d"}`, limit) }
 			/>
-			<button type="button" class="btn btn-outline btn-secondary" hx-post="/search" hx-vals='{"query":"","category":"","page":"1","limit":"15"}' hx-target="#results" onclick="document.getElementById('category-select').value=''; document.getElementById('search-input').value='';">Clear Filters</button>
+			<button type="button" class="btn btn-outline btn-secondary" hx-post={ basePath + "search" } hx-vals={ fmt.Sprintf(`{"query":"","category":"","page":"1","limit":"%d"}`, limit) } hx-target="#results" hx-push-url="true" onclick="document.getElementById('category-select').value=''; document.getElementById('search-input').value='';">Clear Filters</button>
 		</div>
 		<!-- Results (cards + pagination) -->
 		<div id="results" class="grow flex flex-col">
