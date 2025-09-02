@@ -4,11 +4,11 @@ import "github.com/git-saj/go-media-control/internal/xtream"
 import "fmt"
 import "net/url"
 
-templ Home(channels []xtream.MediaItem, page, limit, total int, basePath string, hasAuth bool, categories []xtream.Category) {
-	@Base(homeContent(channels, page, limit, total, basePath, hasAuth, categories), basePath)
+templ Home(channels []xtream.MediaItem, page, limit, total int, basePath string, hasAuth bool, categories []xtream.Category, query, category string) {
+	@Base(homeContent(channels, page, limit, total, basePath, hasAuth, categories, query, category), basePath)
 }
 
-templ homeContent(channels []xtream.MediaItem, page, limit, total int, basePath string, hasAuth bool, categories []xtream.Category) {
+templ homeContent(channels []xtream.MediaItem, page, limit, total int, basePath string, hasAuth bool, categories []xtream.Category, query, category string) {
 	<div class="w-full max-w-7xl p-6 min-h-screen flex flex-col">
 		<!-- Navbar -->
 		<div class="navbar bg-base-100 shadow-sm shrink-0 mb-6">
@@ -36,11 +36,11 @@ templ homeContent(channels []xtream.MediaItem, page, limit, total int, basePath 
 				hx-post={ basePath + "search" }
 				hx-target="#results"
 				hx-trigger="change"
-				hx-vals={ fmt.Sprintf(`{"query":"","page":"1","limit":"%d"}`, limit) }
+				hx-vals={ fmt.Sprintf(`{"query":"%s","page":"1","limit":"%d"}`, url.QueryEscape(query), limit) }
 			>
 				<option value="">All Categories</option>
 				for _, cat := range categories {
-					<option value={ cat.CategoryID }>{ cat.CategoryName }</option>
+					<option value={ cat.CategoryID } selected?={ category == cat.CategoryID }>{ cat.CategoryName }</option>
 				}
 			</select>
 			<input
@@ -52,6 +52,7 @@ templ homeContent(channels []xtream.MediaItem, page, limit, total int, basePath 
 				hx-target="#results"
 				hx-trigger="keyup delay:200ms"
 				name="query"
+				value={ query }
 				hx-include="[name='category']"
 				hx-vals={ fmt.Sprintf(`{"page":"1","limit":"%d"}`, limit) }
 			/>
@@ -84,15 +85,15 @@ templ homeContent(channels []xtream.MediaItem, page, limit, total int, basePath 
 	</div>
 }
 
-templ Results(channels []xtream.MediaItem, page, limit, total int, basePath string, query string) {
+templ Results(channels []xtream.MediaItem, page, limit, total int, basePath string, query, category string) {
 	<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 max-h-[calc(100vh-12rem)] overflow-auto">
 		@ChannelCards(channels, basePath)
 	</div>
 	<div class="mt-6 flex justify-between shrink-0 bg-base-100 py-2">
 		<a
-			href={ templ.SafeURL(fmt.Sprintf("%ssearch?page=%d&limit=%d&query=%s", basePath, page-1, limit, url.QueryEscape(query))) }
+			href={ templ.SafeURL(fmt.Sprintf("%ssearch?page=%d&limit=%d&query=%s&category=%s", basePath, page-1, limit, url.QueryEscape(query), url.QueryEscape(category))) }
 			hx-post={ basePath + "search" }
-			hx-vals={ fmt.Sprintf(`{"query":"%s","page":"%d","limit":"%d"}`, query, page-1, limit) }
+			hx-vals={ fmt.Sprintf(`{"query":"%s","page":"%d","limit":"%d","category":"%s"}`, query, page-1, limit, category) }
 			hx-include="[name='category']"
 			hx-target="#results"
 			hx-push-url="true"
@@ -100,9 +101,9 @@ templ Results(channels []xtream.MediaItem, page, limit, total int, basePath stri
 		>Previous</a>
 		<span>Page { fmt.Sprintf("%d", page) } of { fmt.Sprintf("%d", (total + limit - 1) / limit) }</span>
 		<a
-			href={ templ.SafeURL(fmt.Sprintf("%ssearch?page=%d&limit=%d&query=%s", basePath, page+1, limit, url.QueryEscape(query))) }
+			href={ templ.SafeURL(fmt.Sprintf("%ssearch?page=%d&limit=%d&query=%s&category=%s", basePath, page+1, limit, url.QueryEscape(query), url.QueryEscape(category))) }
 			hx-post={ basePath + "search" }
-			hx-vals={ fmt.Sprintf(`{"query":"%s","page":"%d","limit":"%d"}`, query, page+1, limit) }
+			hx-vals={ fmt.Sprintf(`{"query":"%s","page":"%d","limit":"%d","category":"%s"}`, query, page+1, limit, category) }
 			hx-include="[name='category']"
 			hx-target="#results"
 			hx-push-url="true"
