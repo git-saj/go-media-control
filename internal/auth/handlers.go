@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/coreos/go-oidc/v3/oidc"
 )
 
 // AuthHandlers contains the HTTP handlers for authentication
@@ -225,4 +227,50 @@ func (h *AuthHandlers) UserInfoHandler(w http.ResponseWriter, r *http.Request) {
 	}`, userInfo.Subject, userInfo.PreferredUsername, userInfo.Name, userInfo.Email)
 
 	w.Write([]byte(response))
+}
+
+// BackChannelLogoutHandler handles back-channel logout requests from the OP
+func (h *AuthHandlers) BackChannelLogoutHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	err := r.ParseForm()
+	if err != nil {
+		h.logger.Error("Failed to parse form", "error", err)
+		http.Error(w, "Invalid request", http.StatusBadRequest)
+		return
+	}
+
+	logoutToken := r.FormValue("logout_token")
+	if logoutToken == "" {
+		http.Error(w, "Missing logout_token", http.StatusBadRequest)
+		return
+	}
+
+	verifier := h.authService.provider.Verifier(&oidc.Config{ClientID: h.authService.config.ClientID})
+	idToken, err := verifier.Verify(r.Context(), logoutToken)
+	if err != nil {
+		h.logger.Error("Invalid logout token", "error", err)
+		http.Error(w, "Invalid logout token", http.StatusBadRequest)
+		return
+	}
+
+	var claims struct {
+		Sub string `json:"sub"`
+		Sid string `json:"sid"`
+	}
+
+	err = idToken.Claims(&claims)
+	if err != nil {
+		h.logger.Error("Failed to parse claims", "error", err)
+		http.Error(w, "Invalid claims", http.StatusBadRequest)
+		return
+	}
+
+	h.logger.Info("Back-channel logout processed", "sub", claims.Sub, "sid", claims.Sid)
+
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("Logout processed"))
 }

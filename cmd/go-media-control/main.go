@@ -81,6 +81,7 @@ func main() {
 				r.Get("/callback", authHandlers.CallbackHandler)
 				r.Get("/logout", authHandlers.LogoutHandler)
 				r.Get("/logged-out", authHandlers.LoggedOutHandler)
+				r.Post("/back-channel-logout", authHandlers.BackChannelLogoutHandler)
 				r.Get("/user", authHandlers.UserInfoHandler) // For debugging
 			})
 
@@ -132,6 +133,7 @@ func main() {
 					r.Get("/callback", authHandlers.CallbackHandler)
 					r.Get("/logout", authHandlers.LogoutHandler)
 					r.Get("/logged-out", authHandlers.LoggedOutHandler)
+					r.Post("/back-channel-logout", authHandlers.BackChannelLogoutHandler)
 					r.Get("/user", authHandlers.UserInfoHandler) // For debugging
 				})
 
