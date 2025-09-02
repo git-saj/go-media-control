@@ -22,6 +22,7 @@ pkgs.mkShell {
     govulncheck
   ];
   shellHook = ''
+    source .env
     echo "🚀 Development environment loaded."
     echo "Go version: $(go version)"
     echo "Templ version: $(templ version)"

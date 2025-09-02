@@ -16,12 +16,13 @@ type Config struct {
 	Port           string
 	BasePath       string
 	// Authentik OIDC configuration
-	AuthentikURL  string
-	ClientID      string
-	ClientSecret  string
-	RedirectURL   string
-	SessionSecret string
-	DisableAuth   bool
+	AuthentikURL       string
+	ClientID           string
+	ClientSecret       string
+	RedirectURL        string
+	SessionSecret      string
+	DisableAuth        bool
+	DisableEpgPrefetch bool
 }
 
 // LoadConfig reads the environment variables and returns a Config struct
@@ -35,12 +36,13 @@ func LoadConfig() (*Config, error) {
 		Port:           os.Getenv("PORT"),
 		BasePath:       os.Getenv("BASE_PATH"),
 		// Authentik OIDC configuration
-		AuthentikURL:  os.Getenv("AUTHENTIK_URL"),
-		ClientID:      os.Getenv("AUTHENTIK_CLIENT_ID"),
-		ClientSecret:  os.Getenv("AUTHENTIK_CLIENT_SECRET"),
-		RedirectURL:   os.Getenv("AUTHENTIK_REDIRECT_URL"),
-		SessionSecret: os.Getenv("SESSION_SECRET"),
-		DisableAuth:   os.Getenv("DISABLE_AUTH") == "true",
+		AuthentikURL:       os.Getenv("AUTHENTIK_URL"),
+		ClientID:           os.Getenv("AUTHENTIK_CLIENT_ID"),
+		ClientSecret:       os.Getenv("AUTHENTIK_CLIENT_SECRET"),
+		RedirectURL:        os.Getenv("AUTHENTIK_REDIRECT_URL"),
+		SessionSecret:      os.Getenv("SESSION_SECRET"),
+		DisableAuth:        os.Getenv("DISABLE_AUTH") == "true",
+		DisableEpgPrefetch: os.Getenv("DISABLE_EPG_PREFETCH") == "true",
 	}
 
 	// Validate required fields

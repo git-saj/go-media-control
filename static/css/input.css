@@ -2,3 +2,19 @@
 @plugin "daisyui" {
     themes: aqua --default;
 }
+
+.marquee-content {
+    display: inline-block !important;
+    white-space: nowrap !important;
+    word-wrap: none !important;
+    animation: marquee 20s linear infinite !important;
+}
+
+@keyframes marquee {
+    0% {
+        transform: translateX(100%);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}

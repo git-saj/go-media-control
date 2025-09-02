@@ -96,6 +96,7 @@ func main() {
 				// Define protected routes
 				r.Get("/", h.HomeHandler)
 				r.Get("/api/media", h.MediaHandler)
+				r.Get("/api/epg", h.EpgHandler)
 				r.Post("/api/send", h.SendHandler)
 				r.Get("/search", h.SearchHandler)
 				r.Post("/search", h.SearchHandler)
@@ -110,6 +111,7 @@ func main() {
 			// Define public routes
 			r.Get("/", h.HomeHandler)
 			r.Get("/api/media", h.MediaHandler)
+			r.Get("/api/epg", h.EpgHandler)
 			r.Post("/api/send", h.SendHandler)
 			r.Get("/search", h.SearchHandler)
 			r.Post("/search", h.SearchHandler)
@@ -148,6 +150,7 @@ func main() {
 					// Define protected routes
 					r.Get("/", h.HomeHandler)
 					r.Get("/api/media", h.MediaHandler)
+					r.Get("/api/epg", h.EpgHandler)
 					r.Post("/api/send", h.SendHandler)
 					r.Get("/search", h.SearchHandler)
 					r.Post("/search", h.SearchHandler)
@@ -162,6 +165,7 @@ func main() {
 				// Define public routes
 				r.Get("/", h.HomeHandler)
 				r.Get("/api/media", h.MediaHandler)
+				r.Get("/api/epg", h.EpgHandler)
 				r.Post("/api/send", h.SendHandler)
 				r.Get("/search", h.SearchHandler)
 				r.Post("/search", h.SearchHandler)
