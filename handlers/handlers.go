@@ -370,7 +370,7 @@ func (h *Handlers) SendHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	h.logger.Info("Sending command", "channel", req.ChannelID, "url", streamURL)
-	err := h.discordClient.Send(fmt.Sprintf("%sload %s", h.commandPrefix, streamURL))
+	err := h.discordClient.Send(fmt.Sprintf("%s %s", h.commandPrefix, streamURL))
 	if err != nil {
 		h.logger.Error("Failed to send Discord message", "error", err)
 		http.Error(w, "Failed to send command", http.StatusInternalServerError)
