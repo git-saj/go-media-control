@@ -23,7 +23,7 @@ templ homeContent(channels []xtream.MediaItem, page, limit, total int, basePath 
 					</svg>
 				</button>
 				if hasAuth {
-					<a href={ templ.SafeURL(basePath + "auth/logout") } class="btn">Logout</a>
+					<a href={ templ.SafeURL(basePath + "auth/logout?global=true") } class="btn">Logout</a>
 				}
 			</div>
 		</div>

@@ -161,7 +161,7 @@ func (h *AuthHandlers) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Check if we should redirect to Authentik logout
 	baseURL := strings.TrimSuffix(h.authService.config.AuthentikURL, "/")
-	logoutURL := fmt.Sprintf("%s/application/o/go-media-control/end-session/", baseURL)
+	logoutURL := fmt.Sprintf("%s/application/o/end-session/", baseURL)
 
 	// You can optionally redirect to Authentik's logout endpoint
 	// Check if we should redirect to Authentik logout
