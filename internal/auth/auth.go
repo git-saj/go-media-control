@@ -103,17 +103,17 @@ func (a *AuthService) GetAuthURL() (string, string, error) {
 }
 
 // HandleCallback processes the OAuth2 callback and returns user information
-func (a *AuthService) HandleCallback(ctx context.Context, code, state string) (*UserInfo, error) {
+func (a *AuthService) HandleCallback(ctx context.Context, code, state string) (*UserInfo, string, error) {
 	// Exchange code for tokens
 	token, err := a.oauth2Config.Exchange(ctx, code)
 	if err != nil {
-		return nil, fmt.Errorf("failed to exchange code: %w", err)
+		return nil, "", fmt.Errorf("failed to exchange code: %w", err)
 	}
 
 	// Extract ID token
 	rawIDToken, ok := token.Extra("id_token").(string)
 	if !ok {
-		return nil, fmt.Errorf("no id_token in token response")
+		return nil, "", fmt.Errorf("no id_token in token response")
 	}
 
 	// Verify ID token
@@ -123,20 +123,20 @@ func (a *AuthService) HandleCallback(ctx context.Context, code, state string) (*
 
 	idToken, err := verifier.Verify(ctx, rawIDToken)
 	if err != nil {
-		return nil, fmt.Errorf("failed to verify ID token: %w", err)
+		return nil, "", fmt.Errorf("failed to verify ID token: %w", err)
 	}
 
 	// Extract user info from ID token
 	var userInfo UserInfo
 	if err := idToken.Claims(&userInfo); err != nil {
-		return nil, fmt.Errorf("failed to parse user info: %w", err)
+		return nil, "", fmt.Errorf("failed to parse user info: %w", err)
 	}
 
-	return &userInfo, nil
+	return &userInfo, rawIDToken, nil
 }
 
 // CreateSession creates a secure session for the authenticated user
-func (a *AuthService) CreateSession(w http.ResponseWriter, r *http.Request, userInfo *UserInfo) error {
+func (a *AuthService) CreateSession(w http.ResponseWriter, r *http.Request, userInfo *UserInfo, idToken string) error {
 	session, err := a.store.Get(r, "go-media-control-session")
 	if err != nil {
 		return fmt.Errorf("failed to get session: %w", err)
@@ -146,6 +146,7 @@ func (a *AuthService) CreateSession(w http.ResponseWriter, r *http.Request, user
 	session.Values["username"] = userInfo.PreferredUsername
 	session.Values["name"] = userInfo.Name
 	session.Values["email"] = userInfo.Email
+	session.Values["id_token"] = idToken
 	session.Values["authenticated"] = true
 
 	return session.Save(r, w)

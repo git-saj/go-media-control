@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 
@@ -125,7 +126,7 @@ func (h *AuthHandlers) CallbackHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Exchange code for user info
-	userInfo, err := h.authService.HandleCallback(ctx, code, state)
+	userInfo, idToken, err := h.authService.HandleCallback(ctx, code, state)
 	if err != nil {
 		h.logger.Error("Failed to handle OAuth callback", "error", err)
 		http.Error(w, "Authentication failed", http.StatusInternalServerError)
@@ -133,7 +134,7 @@ func (h *AuthHandlers) CallbackHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Create session for authenticated user
-	if err := h.authService.CreateSession(w, r, userInfo); err != nil {
+	if err := h.authService.CreateSession(w, r, userInfo, idToken); err != nil {
 		h.logger.Error("Failed to create user session", "error", err)
 		http.Error(w, "Session creation failed", http.StatusInternalServerError)
 		return
@@ -158,20 +159,33 @@ func (h *AuthHandlers) LogoutHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	h.logger.Info("User logged out")
+	h.logger.Info("Logout request", "url", r.URL.String(), "global", r.URL.Query().Get("global"))
 
 	// Check if we should redirect to Authentik logout
 	baseURL := strings.TrimSuffix(h.authService.config.AuthentikURL, "/")
-	logoutURL := fmt.Sprintf("%s/application/o/end-session/", baseURL)
+	logoutURL := fmt.Sprintf("%s/application/o/go-media-control/end-session/", baseURL)
 
 	// You can optionally redirect to Authentik's logout endpoint
 	// Check if we should redirect to Authentik logout
 	redirectToAuthentik := r.URL.Query().Get("global") == "true"
 
 	if redirectToAuthentik {
+		// Get stored ID token for hint
+		session, err := h.authService.store.Get(r, "go-media-control-session")
+		idToken := ""
+		if err == nil {
+			if id, ok := session.Values["id_token"].(string); ok {
+				idToken = id
+			}
+		}
+
 		// Add post logout redirect URL if needed
 		redirectBaseURL := h.authService.config.RedirectURL[:len(h.authService.config.RedirectURL)-len("/auth/callback")]
 		postLogoutURL := fmt.Sprintf("%s%sauth/logged-out", redirectBaseURL, h.authService.basePath)
 		logoutURL += fmt.Sprintf("?post_logout_redirect_uri=%s", postLogoutURL)
+		if idToken != "" {
+			logoutURL += fmt.Sprintf("&id_token_hint=%s", url.QueryEscape(idToken))
+		}
 		http.Redirect(w, r, logoutURL, http.StatusTemporaryRedirect)
 		return
 	}
