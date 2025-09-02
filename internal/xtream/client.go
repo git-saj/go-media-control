@@ -145,7 +145,14 @@ func (c *Client) GetLiveStreams() ([]MediaItem, error) {
 	c.mu.RLock()
 	if items, ok := c.Cache.Get(); ok {
 		slog.Info("LiveStreams cache hit")
+		// Always populate streamURLs to keep it in sync
 		c.mu.RUnlock()
+		c.mu.Lock()
+		c.streamURLs = make(map[int]string)
+		for _, m := range items {
+			c.streamURLs[m.StreamID] = m.StreamURL
+		}
+		c.mu.Unlock()
 		return items, nil
 	}
 	c.mu.RUnlock()
@@ -160,6 +167,10 @@ func (c *Client) GetLiveStreams() ([]MediaItem, error) {
 	c.streamIDs = make([]int, 0, len(items))
 	for _, m := range items {
 		c.streamIDs = append(c.streamIDs, m.StreamID)
+	}
+	c.streamURLs = make(map[int]string)
+	for _, m := range items {
+		c.streamURLs[m.StreamID] = m.StreamURL
 	}
 
 	// Prefetch EPG asynchronously if needed and not disabled
