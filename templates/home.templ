@@ -116,7 +116,7 @@ templ ChannelCards(channels []xtream.MediaItem, basePath string) {
 	for _, ch := range channels {
 		<div class="card bg-base-200 shadow-xl flex flex-col min-w-0 w-full h-64 hover:bg-base-300 hover:scale-105 transition-all duration-300">
 			<button
-				class="shrink-0 h-40 w-full cursor-pointer flex justify-center items-center bg-base-100"
+				class="shrink-0 h-32 w-full cursor-pointer flex justify-center items-center bg-base-100"
 				hx-post={ basePath + "api/send" }
 				hx-vals={ fmt.Sprintf(`{"channel_id": %d}`, ch.StreamID) }
 				hx-target="body"
@@ -126,7 +126,7 @@ templ ChannelCards(channels []xtream.MediaItem, basePath string) {
 				<img src={ ch.Logo } alt={ ch.Name } class="max-h-full max-w-full object-contain"/>
 			</button>
 			<div class="card-body flex flex-col items-center justify-start relative overflow-hidden">
-				<h2 class="card-title text-center text-sm md:text-base mb-2">{ ch.Name }</h2>
+				<h2 class="card-title text-center text-sm md:text-base mb-0">{ ch.Name }</h2>
 				if ch.CurrentProgram != nil {
 					<p class="text-xs text-center mb-0 leading-none text-white font-bold max-w-full">Now: { ch.CurrentProgram.Title }</p>
 				}
@@ -134,7 +134,7 @@ templ ChannelCards(channels []xtream.MediaItem, basePath string) {
 					<p class="text-xs text-center mb-0 leading-none text-white font-bold max-w-full">Next: { ch.NextProgram.Title }</p>
 				}
 				if ch.CurrentProgram == nil && ch.NextProgram == nil {
-					<p class="text-xs text-center mb-1 leading-none text-white font-bold max-w-full">No EPG data for this channel</p>
+					<p class="text-xs text-center mb-0 leading-none text-white font-bold max-w-full">No EPG data for this channel</p>
 				}
 			</div>
 		</div>

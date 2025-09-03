@@ -507,7 +507,7 @@ func ChannelCards(channels []xtream.MediaItem, basePath string) templ.Component 
 		}
 		ctx = templ.ClearChildren(ctx)
 		for _, ch := range channels {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<div class=\"card bg-base-200 shadow-xl flex flex-col min-w-0 w-full h-64 hover:bg-base-300 hover:scale-105 transition-all duration-300\"><button class=\"shrink-0 h-40 w-full cursor-pointer flex justify-center items-center bg-base-100\" hx-post=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<div class=\"card bg-base-200 shadow-xl flex flex-col min-w-0 w-full h-64 hover:bg-base-300 hover:scale-105 transition-all duration-300\"><button class=\"shrink-0 h-32 w-full cursor-pointer flex justify-center items-center bg-base-100\" hx-post=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -559,7 +559,7 @@ func ChannelCards(channels []xtream.MediaItem, basePath string) templ.Component 
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "\" class=\"max-h-full max-w-full object-contain\"></button><div class=\"card-body flex flex-col items-center justify-start relative overflow-hidden\"><h2 class=\"card-title text-center text-sm md:text-base mb-2\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "\" class=\"max-h-full max-w-full object-contain\"></button><div class=\"card-body flex flex-col items-center justify-start relative overflow-hidden\"><h2 class=\"card-title text-center text-sm md:text-base mb-0\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -615,7 +615,7 @@ func ChannelCards(channels []xtream.MediaItem, basePath string) templ.Component 
 				}
 			}
 			if ch.CurrentProgram == nil && ch.NextProgram == nil {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "<p class=\"text-xs text-center mb-1 leading-none text-white font-bold max-w-full\">No EPG data for this channel</p>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 49, "<p class=\"text-xs text-center mb-0 leading-none text-white font-bold max-w-full\">No EPG data for this channel</p>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
