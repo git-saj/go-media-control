@@ -507,7 +507,7 @@ func ChannelCards(channels []xtream.MediaItem, basePath string) templ.Component 
 		}
 		ctx = templ.ClearChildren(ctx)
 		for _, ch := range channels {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<div class=\"card bg-base-200 shadow-xl flex flex-col min-w-0 w-full h-64 hover:bg-base-300 hover:scale-105 transition-all duration-300\"><button class=\"shrink-0 h-32 w-full cursor-pointer flex justify-center items-center bg-base-100\" hx-post=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "<div class=\"card bg-base-200 shadow-xl flex flex-col min-w-0 w-full h-64 hover:bg-base-300 hover:scale-105 transition-all duration-300\"><button class=\"flex-[2] w-full cursor-pointer flex justify-center items-center bg-base-100\" hx-post=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -559,14 +559,14 @@ func ChannelCards(channels []xtream.MediaItem, basePath string) templ.Component 
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "\" class=\"max-h-full max-w-full object-contain\"></button><div class=\"card-body flex flex-col items-center justify-start relative overflow-hidden\"><h2 class=\"card-title text-center text-sm md:text-base mb-0\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "\" class=\"max-h-full max-w-full object-contain\"></button><div class=\"card-body flex flex-col items-center justify-start relative overflow-hidden flex-[1] p-0\"><h2 class=\"card-title text-center text-sm md:text-base mb-0 mt-0\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var37 string
 			templ_7745c5c3_Var37, templ_7745c5c3_Err = templ.JoinStringErrs(ch.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/home.templ`, Line: 129, Col: 74}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/home.templ`, Line: 129, Col: 79}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var37))
 			if templ_7745c5c3_Err != nil {
